@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Design tokens for BabyCare.
+/// Design tokens for Cresce.
 ///
 /// One small, deliberate palette: teal for trust/care, a peach accent that
 /// echoes the baby illustration, and three *muted* status colors that are

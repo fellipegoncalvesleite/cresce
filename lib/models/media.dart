@@ -25,7 +25,7 @@ class AnimalSound {
   bool get hasAudio => assetPath != null;
 }
 
-/// A short story shown in the reader. Either an original BabyCare story or a
+/// A short story shown in the reader. Either an original Cresce story or a
 /// public-domain text — never a copyrighted children's book.
 class Story {
   const Story({
@@ -43,7 +43,7 @@ class Story {
   final int readingMinutes;
   final List<String> paragraphs;
 
-  /// e.g. "História original BabyCare" or "Domínio público".
+  /// e.g. "História original Cresce" or "Domínio público".
   final String origin;
 }
 

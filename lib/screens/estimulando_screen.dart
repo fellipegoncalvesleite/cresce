@@ -82,7 +82,7 @@ class _StoriesTab extends StatelessWidget {
         const DisclaimerNote(
           icon: Icons.auto_stories_outlined,
           text:
-              'Histórias originais do BabyCare ou de domínio público. Não '
+              'Histórias originais do Cresce ou de domínio público. Não '
               'reproduzimos livros protegidos por direitos autorais.',
         ),
       ],

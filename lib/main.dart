@@ -31,7 +31,7 @@ class BebeCareApp extends StatelessWidget {
       child: Consumer<AppState>(
         builder: (context, state, _) {
           return MaterialApp(
-            title: 'BabyCare',
+            title: 'Cresce',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,

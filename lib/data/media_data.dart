@@ -67,7 +67,7 @@ const List<AnimalSound> animalSounds = [
   ),
 ];
 
-/// Three original short stories written for BabyCare (no famous characters).
+/// Three original short stories written for Cresce (no famous characters).
 /// Simple, repetitive, calming — suited for babies and toddlers.
 const List<Story> stories = [
   Story(
@@ -75,7 +75,7 @@ const List<Story> stories = [
     title: 'A Lua que Queria uma Soneca',
     ageRange: '0–2 anos',
     readingMinutes: 2,
-    origin: 'História original BabyCare',
+    origin: 'História original Cresce',
     paragraphs: [
       'Era uma noite bem quietinha. A Lua subiu devagar, devagarinho, e bocejou: aaaah.',
       'Uma estrela piscou para ela. "Boa noite, Lua." A Lua sorriu e respondeu baixinho: "Boa noite, estrelinha."',
@@ -89,7 +89,7 @@ const List<Story> stories = [
     title: 'O Pintinho e a Gota de Chuva',
     ageRange: '1–3 anos',
     readingMinutes: 2,
-    origin: 'História original BabyCare',
+    origin: 'História original Cresce',
     paragraphs: [
       'Pinx era um pintinho amarelinho que nunca tinha visto a chuva.',
       'Plic! Uma gota caiu no seu biquinho. Plic, ploc! Caíram mais duas no chão.',
@@ -103,7 +103,7 @@ const List<Story> stories = [
     title: 'O Caracol que Andava Devagar',
     ageRange: '1–4 anos',
     readingMinutes: 3,
-    origin: 'História original BabyCare',
+    origin: 'História original Cresce',
     paragraphs: [
       'Cacá, o caracol, andava bem devagar. Tão devagar que as formigas passavam por ele correndo.',
       '"Corre, Cacá!", diziam elas. Mas Cacá gostava de ir devagar, olhando cada folha pelo caminho.',

@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BabyCare'),
+        title: const Text('Cresce'),
         actions: [
           IconButton(
             onPressed: () => appState.toggleTheme(theme.brightness),
