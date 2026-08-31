@@ -11,9 +11,8 @@ import '../theme/app_tokens.dart';
 /// graphic is still present, but it no longer carries the meaning on its own
 /// (many parents didn't read the abstract pointer correctly).
 ///
-/// The same neutral baby illustration is shown for all three states — only the
-/// auxiliary elements change (card tint, status icon, short text). Never a
-/// thin/normal/fat caricature.
+/// The baby illustration matches the current neutral growth band while the
+/// text, icon, and labeled scale remain the authoritative status indicators.
 class GrowthStatusCard extends StatefulWidget {
   const GrowthStatusCard({super.key, required this.status, this.caption});
 
@@ -52,20 +51,13 @@ class _GrowthStatusCardState extends State<GrowthStatusCard>
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final theme = Theme.of(context);
 
-    final baby = Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        shape: BoxShape.circle,
-        border: Border.all(color: status.background, width: 3),
-      ),
-      clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.all(8),
+    final baby = SizedBox(
+      width: 120,
+      height: 120,
       child: Image.asset(
-        'assets/images/baby_icon.png',
+        status.illustrationAsset,
         fit: BoxFit.contain,
-        semanticLabel: 'Ilustração de um bebê',
+        semanticLabel: status.illustrationSemanticLabel,
       ),
     );
 

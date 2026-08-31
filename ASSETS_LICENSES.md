@@ -9,7 +9,10 @@ CC-BY, OFL etc.).
 
 | Arquivo | Origem | Licença / observação |
 |--------|--------|----------------------|
-| `assets/images/baby_icon.png` | Ilustração de bebê com fundo removido localmente (rembg). | Verifique os direitos de uso da imagem-base antes de publicar. Substituível por um ícone próprio ou de banco com licença permissiva. |
+| `assets/images/baby_under_expected.png` | Ilustração original/gerada fornecida especificamente para o Cresce pelo usuário. | Asset original/gerado fornecido para o projeto; nenhuma licença de terceiros declarada. |
+| `assets/images/baby_within_expected.png` | Ilustração original/gerada fornecida especificamente para o Cresce pelo usuário. | Asset original/gerado fornecido para o projeto; nenhuma licença de terceiros declarada. |
+| `assets/images/baby_above_expected.png` | Ilustração original/gerada fornecida especificamente para o Cresce pelo usuário. | Asset original/gerado fornecido para o projeto; nenhuma licença de terceiros declarada. |
+| `assets/images/baby_icon.png` | Ilustração legada com fundo removido localmente (rembg). | Não é mais usada no cartão de crescimento após o CP1; mantenha a verificação de direitos da imagem-base enquanto o arquivo permanecer no repositório. |
 
 ## Fontes
 

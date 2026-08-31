@@ -13,6 +13,21 @@ extension GrowthStatusX on GrowthStatus {
     GrowthStatus.aboveExpected => 'Acima do esperado',
   };
 
+  String get illustrationAsset => switch (this) {
+    GrowthStatus.underExpected => 'assets/images/baby_under_expected.png',
+    GrowthStatus.healthyRange => 'assets/images/baby_within_expected.png',
+    GrowthStatus.aboveExpected => 'assets/images/baby_above_expected.png',
+  };
+
+  String get illustrationSemanticLabel => switch (this) {
+    GrowthStatus.underExpected =>
+      'Ilustração de bebê representando peso abaixo do esperado em relação ao tamanho',
+    GrowthStatus.healthyRange =>
+      'Ilustração de bebê representando peso dentro do esperado em relação ao tamanho',
+    GrowthStatus.aboveExpected =>
+      'Ilustração de bebê representando peso acima do esperado em relação ao tamanho',
+  };
+
   String get description => switch (this) {
     GrowthStatus.underExpected =>
       'O peso em relação ao tamanho parece abaixo do esperado. '
