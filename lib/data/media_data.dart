@@ -1,69 +1,112 @@
+import '../models/age_range.dart';
 import '../models/media.dart';
 
-/// Animal sounds — placeholders only. No audio ships yet; [assetPath] stays
-/// null until a CC0 / public-domain / owned recording is added and documented
-/// in ASSETS_LICENSES.md. The UI shows a "som em breve" state, never plays
-/// unlicensed audio.
+/// Short animal recordings bundled only after source/license verification.
 const List<AnimalSound> animalSounds = [
   AnimalSound(
+    id: 'dog',
     name: 'Cachorro',
     emoji: '🐶',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/dog_bark.mp3',
+    source: 'Wikimedia Commons — Ladrido perro.ogg',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Ladrido_perro.ogg',
+    author: 'Edo.pt2',
+    license: 'CC0 1.0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    attributionRequired: false,
+    modification: 'Transcodificação MP3 gerada pelo Wikimedia Commons.',
   ),
   AnimalSound(
+    id: 'cat',
     name: 'Gato',
     emoji: '🐱',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/cat_meow.mp3',
+    source: 'Wikimedia Commons — Meow.ogg',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Meow.ogg',
+    author: 'Dan Crosby',
+    license: 'CC BY-SA 3.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+    attributionRequired: true,
+    modification:
+        'Transcodificação MP3 gerada pelo Wikimedia Commons; derivado sob CC BY-SA 3.0.',
   ),
   AnimalSound(
+    id: 'cow',
     name: 'Vaca',
     emoji: '🐮',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/cow_moo.mp3',
+    source: 'Wikimedia Commons — Mudchute cow 1.ogg',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Mudchute_cow_1.ogg',
+    author: 'Secretlondon',
+    license: 'CC BY-SA 3.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+    attributionRequired: true,
+    modification:
+        'Transcodificação MP3 gerada pelo Wikimedia Commons; derivado sob CC BY-SA 3.0.',
   ),
   AnimalSound(
+    id: 'rooster',
     name: 'Galo',
     emoji: '🐔',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/rooster_crow.mp3',
+    source: 'Wikimedia Commons — Medium rooster crowing.ogg / PDSounds #539',
+    sourceUrl:
+        'https://commons.wikimedia.org/wiki/File:Medium_rooster_crowing.ogg',
+    author: 'alys',
+    license: 'Domínio público',
+    licenseUrl:
+        'https://commons.wikimedia.org/wiki/File:Medium_rooster_crowing.ogg',
+    attributionRequired: false,
+    modification: 'Transcodificação MP3 gerada pelo Wikimedia Commons.',
   ),
   AnimalSound(
-    name: 'Pato',
-    emoji: '🦆',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
-  ),
-  AnimalSound(
+    id: 'sheep',
     name: 'Ovelha',
     emoji: '🐑',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/sheep_bleat.mp3',
+    source: 'Wikimedia Commons — Sheep bleat.ogg',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sheep_bleat.ogg',
+    author: 'Eviatar Bach',
+    license: 'CC0 1.0',
+    licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    attributionRequired: false,
+    modification: 'Transcodificação MP3 gerada pelo Wikimedia Commons.',
   ),
   AnimalSound(
-    name: 'Cavalo',
-    emoji: '🐴',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
-  ),
-  AnimalSound(
+    id: 'bird',
     name: 'Passarinho',
     emoji: '🐦',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/bird_chirp.mp3',
+    source: 'Wikimedia Commons — Budgerigar chirping.ogg / PDSounds #506',
+    sourceUrl:
+        'https://commons.wikimedia.org/wiki/File:Budgerigar_chirping.ogg',
+    author: 'mary905',
+    license: 'Domínio público',
+    licenseUrl:
+        'https://commons.wikimedia.org/wiki/File:Budgerigar_chirping.ogg',
+    attributionRequired: false,
+    modification: 'Transcodificação MP3 gerada pelo Wikimedia Commons.',
   ),
   AnimalSound(
-    name: 'Abelha',
-    emoji: '🐝',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
-  ),
-  AnimalSound(
+    id: 'frog',
     name: 'Sapo',
     emoji: '🐸',
-    source: 'Acervo próprio (a gravar)',
-    license: 'A definir — apenas CC0 / domínio público',
+    ageRange: AgeRange(minMonths: 4, maxMonths: 48),
+    assetPath: 'audio/animals/frog_croak.mp3',
+    source: 'Wikimedia Commons — Single Frog Croak.oga',
+    sourceUrl: 'https://commons.wikimedia.org/wiki/File:Single_Frog_Croak.oga',
+    author: 'MichaeltheFox8621',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    attributionRequired: true,
+    modification:
+        'Transcodificação MP3 gerada pelo Wikimedia Commons; derivado sob CC BY-SA 4.0.',
   ),
 ];
 
@@ -73,7 +116,7 @@ const List<Story> stories = [
   Story(
     id: 'lua_soneca',
     title: 'A Lua que Queria uma Soneca',
-    ageRange: '0–2 anos',
+    ageRange: AgeRange(minMonths: 0, maxMonths: 24),
     readingMinutes: 2,
     origin: 'História original Cresce',
     paragraphs: [
@@ -87,7 +130,7 @@ const List<Story> stories = [
   Story(
     id: 'pintinho_chuva',
     title: 'O Pintinho e a Gota de Chuva',
-    ageRange: '1–3 anos',
+    ageRange: AgeRange(minMonths: 6, maxMonths: 36),
     readingMinutes: 2,
     origin: 'História original Cresce',
     paragraphs: [
@@ -101,7 +144,7 @@ const List<Story> stories = [
   Story(
     id: 'caracol_devagar',
     title: 'O Caracol que Andava Devagar',
-    ageRange: '1–4 anos',
+    ageRange: AgeRange(minMonths: 12, maxMonths: 48),
     readingMinutes: 3,
     origin: 'História original Cresce',
     paragraphs: [
@@ -124,36 +167,42 @@ const List<Song> songs = [
     moment: SongMoment.sleep,
     suggestion: 'Acalanto tradicional para embalar o sono.',
     searchQuery: 'Nana Neném cantiga de ninar tradicional',
+    ageRange: AgeRange(minMonths: 0, maxMonths: 24),
   ),
   Song(
     title: 'Boi da Cara Preta',
     moment: SongMoment.sleep,
     suggestion: 'Cantiga de ninar bem conhecida para a hora de dormir.',
     searchQuery: 'Boi da Cara Preta cantiga de ninar',
+    ageRange: AgeRange(minMonths: 0, maxMonths: 24),
   ),
   Song(
     title: 'Se Essa Rua Fosse Minha',
     moment: SongMoment.calm,
     suggestion: 'Melodia lenta, boa para acalmar no colo.',
     searchQuery: 'Se Essa Rua Fosse Minha cantiga tradicional',
+    ageRange: AgeRange(minMonths: 0, maxMonths: 48),
   ),
   Song(
     title: 'Borboletinha',
     moment: SongMoment.play,
     suggestion: 'Cantiga com gestos para brincar de imitar.',
     searchQuery: 'Borboletinha cantiga infantil tradicional',
+    ageRange: AgeRange(minMonths: 6, maxMonths: 36),
   ),
   Song(
     title: 'Ciranda, Cirandinha',
     moment: SongMoment.play,
     suggestion: 'Roda cantada para brincar junto.',
     searchQuery: 'Ciranda Cirandinha cantiga de roda',
+    ageRange: AgeRange(minMonths: 18, maxMonths: 48),
   ),
   Song(
     title: 'Peixe Vivo',
     moment: SongMoment.bath,
     suggestion: 'Cantiga leve, combina com a hora do banho.',
     searchQuery: 'Como Pode o Peixe Vivo cantiga tradicional',
+    ageRange: AgeRange(minMonths: 6, maxMonths: 36),
   ),
 ];
 

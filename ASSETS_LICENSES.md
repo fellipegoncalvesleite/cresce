@@ -22,18 +22,24 @@ CC-BY, OFL etc.).
 
 ## Sons de animais
 
-Nenhum áudio é distribuído com o app no momento. Os cards exibem o estado
-"Som em breve" e **não tocam nada** até que um arquivo licenciado seja incluído.
+Os clipes abaixo são redistribuídos com o app. Todos foram conferidos na página
+de descrição do arquivo no Wikimedia Commons antes da inclusão. Os arquivos
+locais são as transcodificações MP3 fornecidas pelo próprio Wikimedia Commons;
+o conteúdo das gravações não foi remixado nem normalizado localmente.
 
-Ao adicionar um som, salve em `assets/audio/animals/`, declare em `pubspec.yaml`
-e registre aqui:
+| Arquivo local | Animal | Fonte / identificador estável | Autor / uploader | Licença exata e link | Atribuição? | Modificação |
+|---|---|---|---|---|---|---|
+| `assets/audio/animals/dog_bark.mp3` | Cachorro | Wikimedia Commons, `File:Ladrido perro.ogg` — https://commons.wikimedia.org/wiki/File:Ladrido_perro.ogg | Edo.pt2 | CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/ | Não | Transcodificação MP3 gerada pelo Wikimedia Commons. |
+| `assets/audio/animals/cat_meow.mp3` | Gato | Wikimedia Commons, `File:Meow.ogg` — https://commons.wikimedia.org/wiki/File:Meow.ogg | Dan Crosby | CC BY-SA 3.0 Unported — https://creativecommons.org/licenses/by-sa/3.0/ | Sim | Transcodificação MP3 gerada pelo Wikimedia Commons; o derivado permanece sob CC BY-SA 3.0. |
+| `assets/audio/animals/cow_moo.mp3` | Vaca | Wikimedia Commons, `File:Mudchute cow 1.ogg` — https://commons.wikimedia.org/wiki/File:Mudchute_cow_1.ogg | Secretlondon | CC BY-SA 3.0 Unported (uma das licenças oferecidas pelo autor) — https://creativecommons.org/licenses/by-sa/3.0/ | Sim | Transcodificação MP3 gerada pelo Wikimedia Commons; o derivado permanece sob CC BY-SA 3.0. |
+| `assets/audio/animals/rooster_crow.mp3` | Galo | Wikimedia Commons, `File:Medium rooster crowing.ogg`; PDSounds record #539 — https://commons.wikimedia.org/wiki/File:Medium_rooster_crowing.ogg | alys | Domínio público; declaração na própria página do arquivo | Não | Transcodificação MP3 gerada pelo Wikimedia Commons. |
+| `assets/audio/animals/sheep_bleat.mp3` | Ovelha | Wikimedia Commons, `File:Sheep bleat.ogg` — https://commons.wikimedia.org/wiki/File:Sheep_bleat.ogg | Eviatar Bach | CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/ | Não | Transcodificação MP3 gerada pelo Wikimedia Commons. |
+| `assets/audio/animals/bird_chirp.mp3` | Passarinho (periquito) | Wikimedia Commons, `File:Budgerigar chirping.ogg`; PDSounds record #506 — https://commons.wikimedia.org/wiki/File:Budgerigar_chirping.ogg | mary905 | Domínio público; declaração na própria página do arquivo | Não | Transcodificação MP3 gerada pelo Wikimedia Commons. |
+| `assets/audio/animals/frog_croak.mp3` | Sapo | Wikimedia Commons, `File:Single Frog Croak.oga` — https://commons.wikimedia.org/wiki/File:Single_Frog_Croak.oga | MichaeltheFox8621 | CC BY-SA 4.0 International — https://creativecommons.org/licenses/by-sa/4.0/ | Sim | Transcodificação MP3 gerada pelo Wikimedia Commons; o derivado permanece sob CC BY-SA 4.0. |
 
-| Arquivo | Animal | Fonte | Licença |
-|--------|--------|-------|---------|
-| _(exemplo)_ `dog.mp3` | Cachorro | Freesound.org #XXXX | CC0 |
-
-Fontes recomendadas: Freesound (filtrar por CC0), BBC Sound Effects (verificar
-termos), gravações próprias.
+Para os itens CC BY-SA, a atribuição, o link para a fonte/licença e a indicação
+da transcodificação são preservados aqui e também permanecem acessíveis pela
+interface de informações do som.
 
 ## Histórias
 

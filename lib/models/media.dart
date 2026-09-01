@@ -1,28 +1,40 @@
 import 'package:flutter/material.dart';
 
-/// An animal sound entry. [assetPath] is null until a properly licensed audio
-/// file is added — the card then shows a "som em breve" placeholder instead of
-/// playing anything unlicensed.
+import 'age_range.dart';
+
+/// A bundled animal sound with structured age guidance and provenance.
 class AnimalSound {
   const AnimalSound({
+    required this.id,
     required this.name,
     required this.emoji,
+    required this.ageRange,
     required this.source,
+    required this.sourceUrl,
+    required this.author,
     required this.license,
+    required this.licenseUrl,
+    required this.attributionRequired,
+    required this.modification,
     this.assetPath,
   });
 
+  final String id;
   final String name;
   final String emoji;
+  final AgeRange ageRange;
   final String? assetPath;
-
-  /// Where the audio comes from (e.g. "Acervo próprio", "Freesound #123").
   final String source;
-
-  /// License under which the audio may be used (e.g. "CC0", "Domínio público").
+  final String sourceUrl;
+  final String author;
   final String license;
+  final String licenseUrl;
+  final bool attributionRequired;
+  final String modification;
 
   bool get hasAudio => assetPath != null;
+
+  String get ageLabel => _ageLabel(ageRange);
 }
 
 /// A short story shown in the reader. Either an original Cresce story or a
@@ -39,12 +51,14 @@ class Story {
 
   final String id;
   final String title;
-  final String ageRange;
+  final AgeRange ageRange;
   final int readingMinutes;
   final List<String> paragraphs;
 
   /// e.g. "História original Cresce" or "Domínio público".
   final String origin;
+
+  String get ageLabel => _ageLabel(ageRange);
 }
 
 /// What moment a song suits, used to label cards (never the full lyrics).
@@ -74,6 +88,7 @@ class Song {
     required this.moment,
     required this.suggestion,
     required this.searchQuery,
+    required this.ageRange,
     this.isPublicDomain = true,
   });
 
@@ -81,7 +96,10 @@ class Song {
   final SongMoment moment;
   final String suggestion;
   final String searchQuery;
+  final AgeRange ageRange;
   final bool isPublicDomain;
+
+  String get ageLabel => _ageLabel(ageRange);
 }
 
 enum MediaPlatform { youtube, spotify }
@@ -110,3 +128,6 @@ class ExternalMediaLink {
   final String query;
   final String description;
 }
+
+String _ageLabel(AgeRange range) =>
+    '${range.minMonths}–${range.maxMonths} meses';

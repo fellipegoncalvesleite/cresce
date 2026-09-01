@@ -8,9 +8,12 @@ import '../theme/app_tokens.dart';
 /// audio is bundled yet it shows a "som em breve" state instead of playing
 /// anything unlicensed. Reflects the shared player's state (one sound at a time).
 class AnimalSoundCard extends StatelessWidget {
-  const AnimalSoundCard({super.key, required this.sound});
+  const AnimalSoundCard({super.key, required this.sound, this.player});
 
   final AnimalSound sound;
+  final SoundPlaybackController? player;
+
+  SoundPlaybackController get _player => player ?? SoundPlayer.instance;
 
   Future<void> _onTap(BuildContext context) async {
     if (!sound.hasAudio) {
@@ -24,7 +27,7 @@ class AnimalSoundCard extends StatelessWidget {
       return;
     }
     try {
-      await SoundPlayer.instance.toggle(sound.assetPath!);
+      await _player.toggle(sound.assetPath!);
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -45,7 +48,17 @@ class AnimalSoundCard extends StatelessWidget {
           children: [
             Text('Fonte: ${sound.source}'),
             const SizedBox(height: 6),
+            Text('Autor: ${sound.author}'),
+            const SizedBox(height: 6),
             Text('Licença: ${sound.license}'),
+            const SizedBox(height: 6),
+            SelectableText(sound.licenseUrl),
+            const SizedBox(height: 6),
+            SelectableText(sound.sourceUrl),
+            if (sound.modification.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text('Arquivo local: ${sound.modification}'),
+            ],
           ],
         ),
         actions: [
@@ -94,7 +107,7 @@ class AnimalSoundCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               ValueListenableBuilder<String?>(
-                valueListenable: SoundPlayer.instance.playing,
+                valueListenable: _player.playing,
                 builder: (context, playingPath, _) {
                   final isPlaying =
                       sound.hasAudio && playingPath == sound.assetPath;
@@ -138,7 +151,7 @@ class _PlayChip extends StatelessWidget {
       ),
       (true, true) => (
         Icons.stop_rounded,
-        'Tocando',
+        'Parar',
         AppColors.healthyFg,
         AppColors.healthyBg,
       ),

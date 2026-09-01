@@ -32,7 +32,7 @@ class StoryReaderScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '${story.origin} · ${story.ageRange} · ${story.readingMinutes} min',
+                  '${story.origin} · ${story.ageLabel} · ${story.readingMinutes} min',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.inkMuted,
                     fontWeight: FontWeight.w700,

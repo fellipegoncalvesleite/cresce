@@ -29,7 +29,7 @@ class StoryCard extends StatelessWidget {
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.xs,
             children: [
-              _MetaChip(icon: Icons.child_care_outlined, label: story.ageRange),
+              _MetaChip(icon: Icons.child_care_outlined, label: story.ageLabel),
               _MetaChip(
                 icon: Icons.schedule_outlined,
                 label: '${story.readingMinutes} min de leitura',
