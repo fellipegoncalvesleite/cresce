@@ -180,6 +180,51 @@ void main() {
     },
   );
 
+  test(
+    'startPersonalProfile clears demo content and preserves theme and preferences',
+    () async {
+      final (_, state) = await freshState();
+      await state.setThemeMode(ThemeMode.dark);
+      await state.setVaccineRemindersEnabled(false);
+      await state.setWeeklyTipsEnabled(false);
+      await state.setEmailNewsEnabled(true);
+
+      expect(state.recordFor('bcg_0'), isNotNull);
+      expect(state.growthHistory, isNotEmpty);
+
+      await state.startPersonalProfile();
+
+      expect(state.isDemoProfile, isFalse);
+      expect(state.babyName, 'bebê');
+      expect(state.birthDate, isNull);
+      expect(state.parent1Name, isEmpty);
+      expect(state.parent2Name, isEmpty);
+      expect(state.userEmail, isNull);
+      expect(state.growthHistory, isEmpty);
+      expect(state.recordFor('bcg_0'), isNull);
+      expect(state.themeMode, ThemeMode.dark);
+      expect(state.vaccineRemindersEnabled, isFalse);
+      expect(state.weeklyTipsEnabled, isFalse);
+      expect(state.emailNewsEnabled, isTrue);
+    },
+  );
+
+  test('personal profile reload does not reseed Lia', () async {
+    final (prefs, state) = await freshState();
+
+    await state.startPersonalProfile();
+
+    final reloaded = AppState(prefs: prefs, now: () => fixedNow);
+    await reloaded.load();
+
+    expect(prefs.getInt('demo_seed_version'), 1);
+    expect(reloaded.isDemoProfile, isFalse);
+    expect(reloaded.babyName, 'bebê');
+    expect(reloaded.birthDate, isNull);
+    expect(reloaded.growthHistory, isEmpty);
+    expect(reloaded.recordFor('bcg_0'), isNull);
+  });
+
   test('settings preference toggles persist across AppState reload', () async {
     final (prefs, state) = await freshState();
 

@@ -142,3 +142,11 @@ List<BabyTip> tipsForAge(int? ageMonths) {
   if (ageMonths == null) return genericBabyTips;
   return babyTips.where((tip) => tip.ageRange.contains(ageMonths)).toList();
 }
+
+BabyTip tipForDay({required DateTime date, int? ageMonths}) {
+  final ageMatches = tipsForAge(ageMonths);
+  final candidates = ageMatches.isEmpty ? genericBabyTips : ageMatches;
+  final seed =
+      date.year * 10000 + date.month * 100 + date.day + (ageMonths ?? 0) * 37;
+  return candidates[seed.abs() % candidates.length];
+}

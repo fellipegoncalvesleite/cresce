@@ -245,10 +245,14 @@ class _BirthDateCard extends StatelessWidget {
     final birth = appState.birthDate;
     final months = appState.babyAgeMonths;
     final theme = Theme.of(context);
+    final isDemoProfile = appState.isDemoProfile;
 
     return AppCard(
-      onTap: () => _pick(context),
-      semanticLabel: 'Definir data de nascimento do bebê',
+      key: const Key('vaccine-birth-date-card'),
+      onTap: isDemoProfile ? () => appState.selectTab(4) : () => _pick(context),
+      semanticLabel: isDemoProfile
+          ? 'Data de nascimento da demonstração. Vá para Conta para começar com seu bebê.'
+          : 'Definir data de nascimento do bebê',
       child: Row(
         children: [
           Icon(Icons.cake_outlined, color: AppColors.primaryDark),
@@ -258,7 +262,9 @@ class _BirthDateCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  birth == null
+                  isDemoProfile
+                      ? 'Perfil de demonstração'
+                      : birth == null
                       ? 'Definir data de nascimento'
                       : 'Nascimento: ${DateFormat('dd/MM/yyyy', 'pt_BR').format(birth)}',
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -267,7 +273,9 @@ class _BirthDateCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  birth == null
+                  isDemoProfile
+                      ? 'Para alterar a idade, escolha “Começar com meu bebê” na Conta.'
+                      : birth == null
                       ? 'Ajuda a mostrar o que está próximo ou atrasado.'
                       : '${months ?? 0} meses de vida',
                   style: theme.textTheme.bodySmall?.copyWith(

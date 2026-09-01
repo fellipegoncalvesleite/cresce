@@ -6,17 +6,45 @@ import '../theme/app_tokens.dart';
 import '../widgets/app_card.dart';
 import '../widgets/disclaimer_note.dart';
 import '../widgets/section_header.dart';
+import 'legal_document_screen.dart';
 
-/// App settings. Theme and lightweight preference toggles persist locally via
-/// [AppState]; notification/email delivery itself is not implemented yet.
-class SettingsScreen extends StatefulWidget {
+/// Local settings for appearance, Home content and showcase reset.
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
+  Future<void> _confirmResetDemo(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Restaurar demonstração?'),
+        content: const Text(
+          'Os dados atuais do perfil serão substituídos pelos dados de exemplo '
+          'da Lia. Tema e preferências da Página inicial serão preservados.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            key: const Key('confirm-reset-demo-data'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Restaurar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await context.read<AppState>().resetDemoData();
+    }
+  }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+  void _openLegal(BuildContext context, LegalDocumentType type) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => LegalDocumentScreen(type: type)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -64,8 +92,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: AppSpacing.xl),
             const SectionHeader(
-              title: 'Notificações',
-              subtitle: 'Lembretes e novidades.',
+              title: 'Página inicial',
+              subtitle: 'Escolha quais resumos locais aparecem no seu dia.',
             ),
             AppCard(
               padding: EdgeInsets.zero,
@@ -75,21 +103,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: appState.vaccineRemindersEnabled,
                     onChanged: appState.setVaccineRemindersEnabled,
                     title: const Text('Lembretes de vacina'),
+                    subtitle: const Text('Mostra o resumo de vacinas na Home.'),
                     secondary: const Icon(Icons.vaccines_outlined),
                   ),
                   SwitchListTile(
                     value: appState.weeklyTipsEnabled,
                     onChanged: appState.setWeeklyTipsEnabled,
-                    title: const Text('Dicas semanais'),
+                    title: const Text('Dicas para esta fase'),
+                    subtitle: const Text('Mostra uma dica diária na Home.'),
                     secondary: const Icon(Icons.tips_and_updates_outlined),
                   ),
-                  SwitchListTile(
-                    value: appState.emailNewsEnabled,
-                    onChanged: appState.setEmailNewsEnabled,
-                    title: const Text('Novidades por e-mail'),
-                    secondary: const Icon(Icons.mail_outline),
-                  ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            const SectionHeader(title: 'Demonstração'),
+            AppCard(
+              padding: EdgeInsets.zero,
+              child: ListTile(
+                key: const Key('reset-demo-data'),
+                leading: const Icon(Icons.restart_alt_outlined),
+                title: const Text('Restaurar demonstração'),
+                subtitle: const Text('Repõe o perfil de exemplo da Lia.'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _confirmResetDemo(context),
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -110,13 +147,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leading: const Icon(Icons.description_outlined),
                     title: const Text('Termos de uso'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showStub(context, 'Termos de uso'),
+                    onTap: () => _openLegal(context, LegalDocumentType.terms),
                   ),
                   ListTile(
                     leading: const Icon(Icons.privacy_tip_outlined),
                     title: const Text('Política de privacidade'),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showStub(context, 'Política de privacidade'),
+                    onTap: () => _openLegal(context, LegalDocumentType.privacy),
                   ),
                 ],
               ),
@@ -124,34 +161,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.lg),
             const DisclaimerNote(
               text:
-                  'As preferências ficam salvas neste aparelho. Lembretes e '
-                  'envio de e-mail ainda não são executados pelo app.',
+                  'Estas opções alteram apenas o conteúdo local da Página inicial; não agendam notificações nem enviam e-mails.',
             ),
           ],
         ),
       ),
     );
   }
-
-  void _showStub(BuildContext context, String title) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: const Text('Conteúdo de demonstração — em breve.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Fechar'),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-/// A single selectable theme row (custom so it themes cleanly and avoids the
-/// deprecated Radio group APIs).
 class _ThemeOption extends StatelessWidget {
   const _ThemeOption({
     required this.label,

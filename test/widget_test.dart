@@ -5,7 +5,7 @@ import 'package:bebecare/main.dart';
 import 'package:bebecare/services/app_state.dart';
 
 void main() {
-  testWidgets('App boots and shows the home greeting', (tester) async {
+  testWidgets('App boots into the populated demo Home', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await initializeDateFormatting('pt_BR', null);
 
@@ -15,7 +15,8 @@ void main() {
     await tester.pumpWidget(BebeCareApp(appState: appState));
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.textContaining('Olá'), findsOneWidget);
+    expect(find.textContaining('Lia · 8 meses'), findsOneWidget);
+    expect(find.text('Demonstração'), findsOneWidget);
     expect(find.text('Crescimento'), findsWidgets);
   });
 }

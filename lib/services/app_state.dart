@@ -353,6 +353,34 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Leaves the bundled Lia showcase and starts a clean local personal profile.
+  /// Theme/preferences and the seed-version marker are deliberately preserved.
+  Future<void> startPersonalProfile() async {
+    final prefs = _prefs ??= await SharedPreferences.getInstance();
+
+    _babyName = 'bebê';
+    _birthDate = null;
+    _parent1Name = '';
+    _parent2Name = '';
+    _userEmail = null;
+    _isDemoProfile = false;
+    _growthHistory.clear();
+    _vaccineRecords.clear();
+
+    await prefs.remove(_kName);
+    await prefs.remove(_kBirth);
+    await prefs.remove(_kParent1);
+    await prefs.remove(_kParent2);
+    await prefs.remove(_kEmail);
+    await prefs.remove(_kGrowthHistory);
+    await prefs.remove(_kLegacyGrowth);
+    await prefs.remove(_kVaccines);
+    await prefs.setBool(_kIsDemoProfile, false);
+    await prefs.setInt(_kDataVersion, _currentDataVersion);
+
+    notifyListeners();
+  }
+
   Future<void> _applyDemoData(
     SharedPreferences prefs,
     DemoProfileData demo,

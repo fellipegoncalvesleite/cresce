@@ -20,6 +20,25 @@ void main() {
     expect(tips, genericBabyTips);
   });
 
+  test('tipForDay is deterministic for the same date and age', () {
+    final date = DateTime(2026, 9, 1, 23, 59);
+
+    final first = tipForDay(date: date, ageMonths: 8);
+    final second = tipForDay(date: date, ageMonths: 8);
+
+    expect(second.id, first.id);
+    expect(second.text, first.text);
+    expect(first.ageRange.contains(8), isTrue);
+  });
+
+  test('tipForDay falls back safely when age has no curated matches', () {
+    final unknown = tipForDay(date: DateTime(2026, 9, 1), ageMonths: null);
+    final outsideRange = tipForDay(date: DateTime(2026, 9, 1), ageMonths: 120);
+
+    expect(genericBabyTips, contains(unknown));
+    expect(genericBabyTips, contains(outsideRange));
+  });
+
   test('messageForDay is deterministic for the same date and age', () {
     final date = DateTime(2026, 8, 31);
 
