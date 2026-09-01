@@ -115,6 +115,38 @@ class GrowthMeasurement {
   }
 }
 
+/// One persisted growth measurement together with the time it was recorded.
+class GrowthRecord {
+  const GrowthRecord({required this.measurement, required this.recordedAt});
+
+  final GrowthMeasurement measurement;
+  final DateTime recordedAt;
+
+  Map<String, dynamic> toJson() => {
+    'measurement': measurement.toJson(),
+    'recordedAt': recordedAt.toIso8601String(),
+  };
+
+  static GrowthRecord? fromJson(Map<String, dynamic>? json) {
+    if (json == null) return null;
+    try {
+      final measurementRaw = json['measurement'];
+      final recordedAtRaw = json['recordedAt'];
+      if (measurementRaw is! Map || recordedAtRaw is! String) return null;
+
+      final measurement = GrowthMeasurement.fromJson(
+        Map<String, dynamic>.from(measurementRaw),
+      );
+      final recordedAt = DateTime.tryParse(recordedAtRaw);
+      if (measurement == null || recordedAt == null) return null;
+
+      return GrowthRecord(measurement: measurement, recordedAt: recordedAt);
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
 /// Maps a measurement to a [GrowthStatus]. Thresholds are intentionally
 /// conservative and centralised here so they're easy to tune or replace with
 /// proper WHO curves later. Treated as guidance only.

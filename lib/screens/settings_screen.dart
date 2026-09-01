@@ -7,9 +7,8 @@ import '../widgets/app_card.dart';
 import '../widgets/disclaimer_note.dart';
 import '../widgets/section_header.dart';
 
-/// App settings. The appearance/theme control is real (drives [AppState]); the
-/// notification toggles are demonstrative only (local, non-persistent) so the
-/// screen looks complete without promising a backend that doesn't exist.
+/// App settings. Theme and lightweight preference toggles persist locally via
+/// [AppState]; notification/email delivery itself is not implemented yet.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -18,11 +17,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // Demonstrative switches — not wired to anything real yet.
-  bool _vaccineReminders = true;
-  bool _weeklyTips = true;
-  bool _emailNews = false;
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
@@ -78,20 +72,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 children: [
                   SwitchListTile(
-                    value: _vaccineReminders,
-                    onChanged: (v) => setState(() => _vaccineReminders = v),
+                    value: appState.vaccineRemindersEnabled,
+                    onChanged: appState.setVaccineRemindersEnabled,
                     title: const Text('Lembretes de vacina'),
                     secondary: const Icon(Icons.vaccines_outlined),
                   ),
                   SwitchListTile(
-                    value: _weeklyTips,
-                    onChanged: (v) => setState(() => _weeklyTips = v),
+                    value: appState.weeklyTipsEnabled,
+                    onChanged: appState.setWeeklyTipsEnabled,
                     title: const Text('Dicas semanais'),
                     secondary: const Icon(Icons.tips_and_updates_outlined),
                   ),
                   SwitchListTile(
-                    value: _emailNews,
-                    onChanged: (v) => setState(() => _emailNews = v),
+                    value: appState.emailNewsEnabled,
+                    onChanged: appState.setEmailNewsEnabled,
                     title: const Text('Novidades por e-mail'),
                     secondary: const Icon(Icons.mail_outline),
                   ),
@@ -130,8 +124,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.lg),
             const DisclaimerNote(
               text:
-                  'Algumas opções desta tela são demonstrativas e ainda não '
-                  'têm efeito real.',
+                  'As preferências ficam salvas neste aparelho. Lembretes e '
+                  'envio de e-mail ainda não são executados pelo app.',
             ),
           ],
         ),
