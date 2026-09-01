@@ -15,6 +15,7 @@ import '../widgets/app_card.dart';
 import '../widgets/disclaimer_note.dart';
 import '../widgets/song_card.dart';
 import '../widgets/story_card.dart';
+import '../widgets/top_level_page_header.dart';
 import 'animal_sound_game_screen.dart';
 import 'peekaboo_activity_screen.dart';
 import 'shapes_activity_screen.dart';
@@ -36,33 +37,51 @@ class EstimulandoScreen extends StatelessWidget {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Estímulos'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: [
-              Tab(text: 'Para hoje'),
-              Tab(text: 'Brincadeiras'),
-              Tab(text: 'Sons'),
-              Tab(text: 'Histórias'),
-              Tab(text: 'Cantigas'),
-            ],
-          ),
-        ),
         body: SafeArea(
-          child: TabBarView(
+          child: Column(
             children: [
-              _TodayTab(
-                babyName: state.babyName,
-                ageMonths: age,
-                daily: daily,
-                player: soundPlayer,
+              const Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.xl,
+                  AppSpacing.md,
+                  AppSpacing.xl,
+                  AppSpacing.sm,
+                ),
+                child: TopLevelPageHeader(
+                  title: 'Estímulos',
+                  subtitle: 'Ideias curtas para explorar juntos.',
+                ),
               ),
-              _ActivitiesTab(ageMonths: age, player: soundPlayer),
-              _SoundsTab(ageMonths: age, player: soundPlayer),
-              _StoriesTab(ageMonths: age),
-              _SongsTab(ageMonths: age),
+              const TabBar(
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Tab(text: 'Para hoje'),
+                  Tab(text: 'Brincadeiras'),
+                  Tab(text: 'Sons'),
+                  Tab(text: 'Histórias'),
+                  Tab(text: 'Cantigas'),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _TodayTab(
+                      babyName: state.babyName,
+                      ageMonths: age,
+                      daily: daily,
+                      player: soundPlayer,
+                    ),
+                    _ActivitiesTab(ageMonths: age, player: soundPlayer),
+                    _SoundsTab(ageMonths: age, player: soundPlayer),
+                    _StoriesTab(ageMonths: age),
+                    _SongsTab(ageMonths: age),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -98,7 +117,7 @@ class _TodayTab extends StatelessWidget {
                 : 'Para $babyName · $ageMonths meses',
             style: Theme.of(
               context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
@@ -174,7 +193,7 @@ class _ActivitiesTab extends StatelessWidget {
               : 'Ideias para esta fase',
           style: Theme.of(
             context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
@@ -195,7 +214,7 @@ class _ActivitiesTab extends StatelessWidget {
             'Explorar outras ideias',
             style: Theme.of(
               context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: AppSpacing.md),
           for (final activity in others) ...[
@@ -232,7 +251,7 @@ class _ActivityCard extends StatelessWidget {
                 child: Text(
                   activity.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -288,17 +307,19 @@ class _SoundsTab extends StatelessWidget {
       soundsForAge(ageMonths),
       (sound) => sound.id,
     );
-    return GridView.count(
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    return GridView.builder(
       key: const Key('stimulation-Sons'),
       padding: const EdgeInsets.all(AppSpacing.lg),
-      crossAxisCount: 2,
-      mainAxisSpacing: AppSpacing.md,
-      crossAxisSpacing: AppSpacing.md,
-      childAspectRatio: 0.82,
-      children: [
-        for (final sound in ordered)
-          AnimalSoundCard(sound: sound, player: player),
-      ],
+      itemCount: ordered.length,
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 250,
+        mainAxisExtent: scale > 1.3 ? 270 : 230,
+        mainAxisSpacing: AppSpacing.md,
+        crossAxisSpacing: AppSpacing.md,
+      ),
+      itemBuilder: (context, index) =>
+          AnimalSoundCard(sound: ordered[index], player: player),
     );
   }
 }
@@ -358,7 +379,7 @@ class _SongsTab extends StatelessWidget {
           'Ouvir e assistir mais',
           style: Theme.of(
             context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: AppSpacing.md),
         for (final rec in externalRecommendations) ...[
@@ -385,7 +406,7 @@ class _SectionTitle extends StatelessWidget {
     text,
     style: Theme.of(
       context,
-    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
   );
 }
 
@@ -473,7 +494,7 @@ Future<void> _showActivityDetails(
               activity.title,
               style: Theme.of(
                 context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
@@ -490,7 +511,7 @@ Future<void> _showActivityDetails(
                 children: [
                   Text(
                     '${i + 1}.',
-                    style: const TextStyle(fontWeight: FontWeight.w800),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(child: Text(activity.instructions[i])),
@@ -548,7 +569,7 @@ class _ExternalRecCard extends StatelessWidget {
           Text(
             rec.label,
             style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 2),

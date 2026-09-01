@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_tokens.dart';
 
-/// Title (+ optional subtitle/trailing) used to open a section. Marked as a
-/// Semantics header so screen readers can navigate by section.
+/// Section heading with native heading semantics and optional context/action.
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
@@ -30,15 +29,10 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Semantics(
                   header: true,
-                  child: Text(
-                    title,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                  child: Text(title, style: theme.textTheme.titleLarge),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -49,7 +43,10 @@ class SectionHeader extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          if (trailing != null) ...[
+            const SizedBox(width: AppSpacing.md),
+            trailing!,
+          ],
         ],
       ),
     );

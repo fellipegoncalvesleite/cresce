@@ -138,98 +138,114 @@ class _AccountScreenState extends State<AccountScreen> {
     final appState = context.watch<AppState>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Conta'),
-        actions: [
-          IconButton(
-            tooltip: 'Configurações',
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Perfil')),
       body: SafeArea(
         top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            _ProfileHeader(appState: appState),
-            const SizedBox(height: AppSpacing.md),
-            _BabySummaryCard(appState: appState),
-            if (appState.isDemoProfile) ...[
-              const SizedBox(height: AppSpacing.md),
-              _DemoTransitionCard(onStart: _startPersonalProfile),
-            ],
-            const SizedBox(height: AppSpacing.xl),
-            if (appState.isLoggedIn)
-              _SignedInCard(
-                email: appState.userEmail!,
-                isDemoProfile: appState.isDemoProfile,
-                onLogout: appState.logout,
-              )
-            else
-              _LoginCard(
-                emailController: _email,
-                passwordController: _password,
-                onLogin: _login,
-              ),
-            const SizedBox(height: AppSpacing.xl),
-            const SectionHeader(
-              title: 'Perfil da família',
-              subtitle: 'Informações locais do bebê e de quem cuida.',
-            ),
-            _BirthDateCard(
-              appState: appState,
-              onTap: appState.isDemoProfile
-                  ? null
-                  : () => _pickBirthDate(appState),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _Field(
-                    fieldKey: const Key('account-baby-name-field'),
-                    controller: _name,
-                    enabled: !appState.isDemoProfile,
-                    label: 'Nome do bebê',
-                    hint: 'ex.: Manuela',
-                    icon: Icons.child_care_outlined,
-                    capitalize: true,
-                  ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: ListView(
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              children: [
+                _ProfileHeader(appState: appState),
+                const SizedBox(height: AppSpacing.md),
+                _BabySummaryCard(appState: appState),
+                if (appState.isDemoProfile) ...[
                   const SizedBox(height: AppSpacing.md),
-                  _Field(
-                    fieldKey: const Key('account-parent1-field'),
-                    controller: _parent1,
-                    enabled: !appState.isDemoProfile,
-                    label: 'Responsável 1',
-                    hint: 'ex.: mãe, pai…',
-                    icon: Icons.person_outline,
-                    capitalize: true,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  _Field(
-                    fieldKey: const Key('account-parent2-field'),
-                    controller: _parent2,
-                    enabled: !appState.isDemoProfile,
-                    label: 'Responsável 2 (opcional)',
-                    hint: 'ex.: mãe, pai…',
-                    icon: Icons.person_outline,
-                    capitalize: true,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  FilledButton.icon(
-                    onPressed: appState.isDemoProfile ? null : _saveProfile,
-                    icon: const Icon(Icons.save_outlined),
-                    label: const Text('Salvar perfil'),
-                  ),
+                  _DemoTransitionCard(onStart: _startPersonalProfile),
                 ],
-              ),
+                const SizedBox(height: AppSpacing.xxl),
+                const SectionHeader(
+                  title: 'Perfil da família',
+                  subtitle: 'Informações locais do bebê e de quem cuida.',
+                ),
+                _BirthDateCard(
+                  appState: appState,
+                  onTap: appState.isDemoProfile
+                      ? null
+                      : () => _pickBirthDate(appState),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppCard(
+                  color: AppColors.groupedSurface,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _Field(
+                        fieldKey: const Key('account-baby-name-field'),
+                        controller: _name,
+                        enabled: !appState.isDemoProfile,
+                        label: 'Nome do bebê',
+                        hint: 'ex.: Manuela',
+                        icon: Icons.child_care_outlined,
+                        capitalize: true,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _Field(
+                        fieldKey: const Key('account-parent1-field'),
+                        controller: _parent1,
+                        enabled: !appState.isDemoProfile,
+                        label: 'Responsável 1',
+                        hint: 'ex.: mãe, pai…',
+                        icon: Icons.person_outline,
+                        capitalize: true,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      _Field(
+                        fieldKey: const Key('account-parent2-field'),
+                        controller: _parent2,
+                        enabled: !appState.isDemoProfile,
+                        label: 'Responsável 2 (opcional)',
+                        hint: 'ex.: mãe, pai…',
+                        icon: Icons.person_outline,
+                        capitalize: true,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      FilledButton.icon(
+                        onPressed: appState.isDemoProfile ? null : _saveProfile,
+                        icon: const Icon(Icons.save_outlined),
+                        label: const Text('Salvar perfil'),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                const SectionHeader(
+                  title: 'Conta local',
+                  subtitle: 'Dados guardados apenas neste aparelho.',
+                ),
+                if (appState.isLoggedIn)
+                  _SignedInCard(
+                    email: appState.userEmail!,
+                    isDemoProfile: appState.isDemoProfile,
+                    onLogout: appState.logout,
+                  )
+                else
+                  _LoginCard(
+                    emailController: _email,
+                    passwordController: _password,
+                    onLogin: _login,
+                  ),
+                const SizedBox(height: AppSpacing.xxl),
+                AppCard(
+                  padding: EdgeInsets.zero,
+                  color: AppColors.groupedSurface,
+                  child: ListTile(
+                    minTileHeight: 56,
+                    leading: const Icon(Icons.settings_outlined),
+                    title: const Text('Configurações'),
+                    subtitle: const Text('Aparência, Página inicial e Sobre'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -253,7 +269,7 @@ class _ProfileHeader extends StatelessWidget {
         : 'Perfil pessoal';
 
     return AppCard(
-      semanticLabel: '$identity. $profileLabel',
+      color: AppColors.groupedSurface,
       child: Row(
         children: [
           Container(
@@ -274,18 +290,13 @@ class _ProfileHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  identity,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                Text(identity, style: theme.textTheme.titleLarge),
                 const SizedBox(height: 2),
                 Text(
                   profileLabel,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.inkMuted,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -314,6 +325,7 @@ class _BabySummaryCard extends StatelessWidget {
         : '${_decimal(measurement.weightKg)} kg · ${_length(measurement.lengthCm)} cm';
 
     return AppCard(
+      color: AppColors.groupedSurface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -349,6 +361,7 @@ class _DemoTransitionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppCard(
+    color: AppColors.accentSoft,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -386,6 +399,7 @@ class _BirthDateCard extends StatelessWidget {
 
     return AppCard(
       key: const Key('account-birth-date-card'),
+      color: AppColors.groupedSurface,
       onTap: onTap,
       semanticLabel: appState.isDemoProfile
           ? 'Data de nascimento da demonstração. Para alterar, comece um perfil pessoal.'
@@ -398,12 +412,7 @@ class _BirthDateCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-                ),
+                Text(title, style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 2),
                 Text(
                   appState.isDemoProfile
@@ -439,6 +448,7 @@ class _SignedInCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AppCard(
+      color: AppColors.groupedSurface,
       child: Row(
         children: [
           Icon(Icons.person_outline, color: AppColors.healthyFg),
@@ -451,13 +461,13 @@ class _SignedInCard extends StatelessWidget {
                   isDemoProfile ? 'Conta local de demonstração' : 'Conta local',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.inkMuted,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   email,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -486,14 +496,13 @@ class _LoginCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AppCard(
+      color: AppColors.groupedSurface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Conta local',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+            'Conta local neste aparelho',
+            style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: AppSpacing.md),
           TextField(

@@ -61,6 +61,7 @@ class SettingsScreen extends StatelessWidget {
               subtitle: 'Escolha o tema do aplicativo.',
             ),
             AppCard(
+              color: AppColors.groupedSurface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -96,6 +97,7 @@ class SettingsScreen extends StatelessWidget {
               subtitle: 'Escolha quais resumos locais aparecem no seu dia.',
             ),
             AppCard(
+              color: AppColors.groupedSurface,
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
@@ -119,6 +121,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
             const SectionHeader(title: 'Demonstração'),
             AppCard(
+              color: AppColors.groupedSurface,
               padding: EdgeInsets.zero,
               child: ListTile(
                 key: const Key('reset-demo-data'),
@@ -132,6 +135,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
             const SectionHeader(title: 'Sobre'),
             AppCard(
+              color: AppColors.groupedSurface,
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
@@ -191,29 +195,32 @@ class _ThemeOption extends StatelessWidget {
     return InkWell(
       onTap: () => onTap(value),
       borderRadius: BorderRadius.circular(AppRadii.field),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? AppColors.primary : AppColors.inkMuted,
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  color: isSelected ? AppColors.primary : AppColors.ink,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? AppColors.primary : AppColors.inkMuted,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? AppColors.primary : AppColors.ink,
+                  ),
                 ),
               ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_circle, color: AppColors.primary)
-            else
-              Icon(Icons.circle_outlined, color: AppColors.hairline),
-          ],
+              if (isSelected)
+                Icon(Icons.check_circle, color: AppColors.primary)
+              else
+                Icon(Icons.circle_outlined, color: AppColors.hairline),
+            ],
+          ),
         ),
       ),
     );

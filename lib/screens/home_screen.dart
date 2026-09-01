@@ -12,9 +12,10 @@ import '../services/stimulation_recommendations.dart';
 import '../services/vaccine_summary.dart';
 import '../theme/app_tokens.dart';
 import '../widgets/app_card.dart';
-import 'settings_screen.dart';
+import '../widgets/section_header.dart';
+import '../widgets/top_level_page_header.dart';
 
-/// Daily snapshot that ties together the locally persisted Cresce systems.
+/// Daily snapshot composed only from the certified CP2D selectors/state.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, this.referenceDate});
 
@@ -23,7 +24,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final theme = Theme.of(context);
     final date = referenceDate ?? DateTime.now();
     final ageMonths = appState.babyAgeMonths;
     final message = messageForDay(date: date, ageMonths: ageMonths);
@@ -40,116 +40,140 @@ class HomeScreen extends StatelessWidget {
         : null;
     final latestGrowth = appState.latestGrowthRecord;
     final growthStatus = appState.growthStatus;
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cresce'),
-        actions: [
-          IconButton(
-            onPressed: () => appState.toggleTheme(theme.brightness),
-            icon: Icon(
-              isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-            ),
-            tooltip: isDark ? 'Tema claro' : 'Tema escuro',
-          ),
-          IconButton(
-            tooltip: 'Configurações',
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
-          ),
-        ],
-      ),
       body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            _IdentityCard(
-              babyName: appState.babyName,
-              ageMonths: ageMonths,
-              isDemoProfile: appState.isDemoProfile,
-              message: message.text,
-              growthStatus: growthStatus,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.xxl,
+              ),
+              children: [
+                const TopLevelPageHeader(title: 'Cresce'),
+                const SizedBox(height: AppSpacing.xl),
+                _IdentityHero(
+                  babyName: appState.babyName,
+                  ageMonths: ageMonths,
+                  isDemoProfile: appState.isDemoProfile,
+                  message: message.text,
+                  growthStatus: growthStatus,
+                ),
+                if (ageMonths == null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _SnapshotCard(
+                    key: const Key('home-birth-cta'),
+                    icon: Icons.cake_outlined,
+                    title: 'Personalize o dia',
+                    headline:
+                        'Adicione a data de nascimento para personalizar as sugestões.',
+                    semanticLabel: 'Adicionar data de nascimento no perfil',
+                    color: AppColors.groupedSurface,
+                    onTap: () => openAccount(context),
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.xxl),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    'HOJE',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.inkMuted,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                _SnapshotCard(
+                  key: const Key('home-activity-card'),
+                  icon: Icons.toys_outlined,
+                  title: 'Atividade de hoje',
+                  headline: daily.activity.title,
+                  detail:
+                      '${daily.activity.durationMinutes} min · ${_categoryLabel(daily.activity.category)}',
+                  semanticLabel: 'Atividade de hoje: ${daily.activity.title}',
+                  color: AppColors.healthyBg,
+                  headlineStyle: Theme.of(context).textTheme.titleLarge,
+                  onTap: () => appState.selectTab(3),
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                const SectionHeader(
+                  title: 'Saúde',
+                  subtitle: 'Um resumo do que já está registrado.',
+                ),
+                AppCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      _GrowthSnapshot(
+                        record: latestGrowth,
+                        status: growthStatus,
+                        onTap: () => appState.selectTab(1),
+                      ),
+                      if (appState.vaccineRemindersEnabled) ...[
+                        Divider(
+                          height: 1,
+                          indent: AppSpacing.xl,
+                          endIndent: AppSpacing.xl,
+                          color: AppColors.hairline,
+                        ),
+                        _VaccineSnapshot(
+                          ageKnown: ageMonths != null,
+                          milestone: vaccineMilestone,
+                          onTap: () => appState.selectTab(2),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (tip != null) ...[
+                  const SizedBox(height: AppSpacing.xxl),
+                  _SnapshotCard(
+                    icon: Icons.tips_and_updates_outlined,
+                    title: 'Dica para esta fase',
+                    headline: tip.text,
+                    detail: tip.category,
+                    semanticLabel: 'Dica para esta fase: ${tip.text}',
+                    color: AppColors.groupedSurface,
+                  ),
+                ],
+                if (daily.story != null || daily.song != null) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _CalmSnapshot(
+                    story: daily.story,
+                    song: daily.song,
+                    onTap: () => appState.selectTab(3),
+                  ),
+                ],
+                if (appState.parent1Name.isEmpty &&
+                    appState.parent2Name.isEmpty) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  _SnapshotCard(
+                    key: const Key('home-caregiver-cta'),
+                    icon: Icons.people_outline,
+                    title: 'Responsáveis',
+                    headline: 'Adicione quem cuida do bebê no perfil.',
+                    semanticLabel: 'Adicionar responsáveis no perfil',
+                    color: AppColors.groupedSurface,
+                    onTap: () => openAccount(context),
+                  ),
+                ],
+              ],
             ),
-            if (ageMonths == null) ...[
-              const SizedBox(height: AppSpacing.md),
-              _SnapshotCard(
-                key: const Key('home-birth-cta'),
-                icon: Icons.cake_outlined,
-                title: 'Personalize o dia',
-                headline:
-                    'Adicione a data de nascimento para personalizar as sugestões.',
-                semanticLabel: 'Adicionar data de nascimento no perfil',
-                onTap: () => appState.selectTab(4),
-              ),
-            ],
-            const SizedBox(height: AppSpacing.xl),
-            _GrowthSnapshot(
-              record: latestGrowth,
-              status: growthStatus,
-              onTap: () => appState.selectTab(1),
-            ),
-            if (appState.vaccineRemindersEnabled) ...[
-              const SizedBox(height: AppSpacing.md),
-              _VaccineSnapshot(
-                ageKnown: ageMonths != null,
-                milestone: vaccineMilestone,
-                onTap: () => appState.selectTab(2),
-              ),
-            ],
-            const SizedBox(height: AppSpacing.md),
-            _SnapshotCard(
-              key: const Key('home-activity-card'),
-              icon: Icons.toys_outlined,
-              title: 'Hoje',
-              headline: daily.activity.title,
-              detail:
-                  '${daily.activity.durationMinutes} min · ${_categoryLabel(daily.activity.category)}',
-              semanticLabel: 'Atividade de hoje: ${daily.activity.title}',
-              onTap: () => appState.selectTab(3),
-            ),
-            if (tip != null) ...[
-              const SizedBox(height: AppSpacing.md),
-              _SnapshotCard(
-                icon: Icons.tips_and_updates_outlined,
-                title: 'Dica para esta fase',
-                headline: tip.text,
-                detail: tip.category,
-                semanticLabel: 'Dica para esta fase: ${tip.text}',
-              ),
-            ],
-            if (daily.story != null || daily.song != null) ...[
-              const SizedBox(height: AppSpacing.md),
-              _CalmSnapshot(
-                story: daily.story,
-                song: daily.song,
-                onTap: () => appState.selectTab(3),
-              ),
-            ],
-            if (appState.parent1Name.isEmpty &&
-                appState.parent2Name.isEmpty) ...[
-              const SizedBox(height: AppSpacing.md),
-              _SnapshotCard(
-                key: const Key('home-caregiver-cta'),
-                icon: Icons.people_outline,
-                title: 'Responsáveis',
-                headline: 'Adicione quem cuida do bebê no perfil.',
-                semanticLabel: 'Adicionar responsáveis no perfil',
-                onTap: () => appState.selectTab(4),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _IdentityCard extends StatelessWidget {
-  const _IdentityCard({
+class _IdentityHero extends StatelessWidget {
+  const _IdentityHero({
     required this.babyName,
     required this.ageMonths,
     required this.isDemoProfile,
@@ -171,25 +195,22 @@ class _IdentityCard extends StatelessWidget {
         : '$babyName · $ageMonths meses';
 
     return AppCard(
-      semanticLabel: isDemoProfile
-          ? '$identity. Perfil de demonstração. $message'
-          : '$identity. $message',
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 58,
-            height: 58,
+            width: 108,
+            height: 108,
             child: growthStatus == null
                 ? DecoratedBox(
                     decoration: BoxDecoration(
-                      color: AppColors.healthyBg,
+                      color: AppColors.groupedSurface,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.child_care_outlined,
-                      color: AppColors.healthyFg,
-                      size: 30,
+                      color: AppColors.primaryDark,
+                      size: 44,
                     ),
                   )
                 : Image.asset(
@@ -203,46 +224,31 @@ class _IdentityCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        identity,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+                Text(identity, style: theme.textTheme.titleLarge),
+                if (isDemoProfile) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.groupedSurface,
+                      borderRadius: BorderRadius.circular(AppRadii.chip),
+                    ),
+                    child: Text(
+                      'Demonstração',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.inkMuted,
                       ),
                     ),
-                    if (isDemoProfile) ...[
-                      const SizedBox(width: AppSpacing.sm),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.sm,
-                          vertical: AppSpacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.background,
-                          borderRadius: BorderRadius.circular(AppRadii.chip),
-                          border: Border.all(color: AppColors.hairline),
-                        ),
-                        child: Text(
-                          'Demonstração',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: AppColors.inkMuted,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   message,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.inkMuted,
-                    height: 1.35,
                   ),
                 ),
               ],
@@ -269,8 +275,8 @@ class _GrowthSnapshot extends StatelessWidget {
   Widget build(BuildContext context) {
     final measurement = record?.measurement;
     if (measurement == null || status == null) {
-      return _SnapshotCard(
-        key: const Key('home-growth-card'),
+      return _HealthRow(
+        tapKey: const Key('home-growth-card'),
         icon: Icons.monitor_weight_outlined,
         title: 'Crescimento',
         headline: 'Registre peso e tamanho para acompanhar o histórico.',
@@ -279,8 +285,8 @@ class _GrowthSnapshot extends StatelessWidget {
       );
     }
 
-    return _SnapshotCard(
-      key: const Key('home-growth-card'),
+    return _HealthRow(
+      tapKey: const Key('home-growth-card'),
       icon: status!.icon,
       title: 'Crescimento',
       headline:
@@ -322,13 +328,84 @@ class _VaccineSnapshot extends StatelessWidget {
           '${milestone!.vaccines.length} registros previstos · ${milestone!.ageLabel}';
     }
 
-    return _SnapshotCard(
-      key: const Key('home-vaccine-card'),
+    return _HealthRow(
+      tapKey: const Key('home-vaccine-card'),
       icon: Icons.vaccines_outlined,
-      title: milestone?.isOverdue == true ? 'Vacinas' : 'Próximas',
+      title: 'Vacinas',
       headline: headline,
       semanticLabel: 'Vacinas: $headline',
       onTap: onTap,
+    );
+  }
+}
+
+class _HealthRow extends StatelessWidget {
+  const _HealthRow({
+    required this.tapKey,
+    required this.icon,
+    required this.title,
+    required this.headline,
+    required this.semanticLabel,
+    required this.onTap,
+    this.detail,
+  });
+
+  final Key tapKey;
+  final IconData icon;
+  final String title;
+  final String headline;
+  final String semanticLabel;
+  final VoidCallback onTap;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      child: ExcludeSemantics(
+        child: InkWell(
+          key: tapKey,
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(icon, color: AppColors.primaryDark, size: 24),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: AppColors.inkMuted,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(headline, style: theme.textTheme.titleSmall),
+                      if (detail != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          detail!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.inkMuted,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Icon(Icons.chevron_right_rounded, color: AppColors.inkMuted),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -361,6 +438,7 @@ class _CalmSnapshot extends StatelessWidget {
       headline: headline,
       detail: detail,
       semanticLabel: 'Para acalmar: $headline',
+      color: AppColors.groupedSurface,
       onTap: onTap,
     );
   }
@@ -375,6 +453,8 @@ class _SnapshotCard extends StatelessWidget {
     required this.semanticLabel,
     this.detail,
     this.onTap,
+    this.color,
+    this.headlineStyle,
   });
 
   final IconData icon;
@@ -383,12 +463,15 @@ class _SnapshotCard extends StatelessWidget {
   final String? detail;
   final String semanticLabel;
   final VoidCallback? onTap;
+  final Color? color;
+  final TextStyle? headlineStyle;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AppCard(
       onTap: onTap,
+      color: color,
       semanticLabel: semanticLabel,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +480,7 @@ class _SnapshotCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.background,
+              color: AppColors.surface.withValues(alpha: 0.72),
               borderRadius: BorderRadius.circular(AppRadii.field),
             ),
             child: Icon(icon, color: AppColors.primaryDark),
@@ -411,15 +494,12 @@ class _SnapshotCard extends StatelessWidget {
                   title,
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: AppColors.inkMuted,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   headline,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: headlineStyle ?? theme.textTheme.titleSmall,
                 ),
                 if (detail != null) ...[
                   const SizedBox(height: AppSpacing.xs),
@@ -435,7 +515,7 @@ class _SnapshotCard extends StatelessWidget {
           ),
           if (onTap != null) ...[
             const SizedBox(width: AppSpacing.sm),
-            Icon(Icons.chevron_right, color: AppColors.inkMuted),
+            Icon(Icons.chevron_right_rounded, color: AppColors.inkMuted),
           ],
         ],
       ),

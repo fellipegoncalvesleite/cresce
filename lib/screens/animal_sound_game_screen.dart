@@ -54,64 +54,86 @@ class AnimalSoundGameScreen extends StatelessWidget {
                 child: ValueListenableBuilder<String?>(
                   valueListenable: _player.playing,
                   builder: (context, playingPath, _) {
-                    return GridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: AppSpacing.md,
-                      crossAxisSpacing: AppSpacing.md,
-                      children: [
-                        for (final sound in choices)
-                          Semantics(
-                            button: true,
-                            label: 'Tocar som de ${sound.name}',
-                            child: Material(
-                              color: playingPath == sound.assetPath
-                                  ? AppColors.accentSoft
-                                  : AppColors.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: AppRadii.cardRadius,
-                                side: BorderSide(color: AppColors.hairline),
-                              ),
-                              child: InkWell(
-                                key: Key('animal-game-${sound.id}'),
-                                borderRadius: AppRadii.cardRadius,
-                                onTap: () => _play(context, sound),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(AppSpacing.md),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        sound.emoji,
-                                        style: const TextStyle(fontSize: 52),
+                    return GridView.builder(
+                      itemCount: choices.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 220,
+                            mainAxisExtent: 190,
+                            mainAxisSpacing: AppSpacing.md,
+                            crossAxisSpacing: AppSpacing.md,
+                          ),
+                      itemBuilder: (context, index) {
+                        final sound = choices[index];
+                        return Semantics(
+                          button: true,
+                          label: playingPath == sound.assetPath
+                              ? 'Parar som de ${sound.name}. Ouvindo ${sound.name}'
+                              : 'Tocar som de ${sound.name}',
+                          child: Material(
+                            color: playingPath == sound.assetPath
+                                ? AppColors.accentSoft
+                                : AppColors.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: AppRadii.cardRadius,
+                            ),
+                            child: InkWell(
+                              key: Key('animal-game-${sound.id}'),
+                              borderRadius: AppRadii.cardRadius,
+                              onTap: () => _play(context, sound),
+                              child: Padding(
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      sound.emoji,
+                                      style: const TextStyle(fontSize: 52),
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    Text(
+                                      sound.name,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
                                       ),
-                                      const SizedBox(height: AppSpacing.sm),
-                                      Text(
-                                        sound.name,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                      const SizedBox(height: AppSpacing.sm),
-                                      Text(
-                                        playingPath == sound.assetPath
-                                            ? 'Ouvindo ${sound.name}'
-                                            : 'Tocar',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w700,
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          playingPath == sound.assetPath
+                                              ? Icons.graphic_eq_rounded
+                                              : Icons.play_arrow_rounded,
+                                          size: 18,
                                           color: AppColors.inkMuted,
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                        const SizedBox(width: AppSpacing.xs),
+                                        Flexible(
+                                          child: Text(
+                                            playingPath == sound.assetPath
+                                                ? 'Ouvindo ${sound.name}'
+                                                : 'Tocar',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.inkMuted,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                      ],
+                        );
+                      },
                     );
                   },
                 ),

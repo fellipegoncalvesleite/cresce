@@ -37,12 +37,7 @@ class SongCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
-                  song.title,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                child: Text(song.title, style: theme.textTheme.titleSmall),
               ),
               _MomentChip(moment: song.moment),
             ],
@@ -116,7 +111,7 @@ class _MomentChip extends StatelessWidget {
             moment.label,
             style: TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: AppColors.ink,
             ),
           ),

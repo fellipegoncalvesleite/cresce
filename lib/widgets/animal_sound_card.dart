@@ -4,9 +4,8 @@ import '../models/media.dart';
 import '../services/sound_player.dart';
 import '../theme/app_tokens.dart';
 
-/// Animal sound tile. Plays the bundled, licensed clip when available; when no
-/// audio is bundled yet it shows a "som em breve" state instead of playing
-/// anything unlicensed. Reflects the shared player's state (one sound at a time).
+/// Calm sound tile backed by the existing licensed clip and shared player.
+/// Playback/provenance behavior remains unchanged and there is no autoplay.
 class AnimalSoundCard extends StatelessWidget {
   const AnimalSoundCard({super.key, required this.sound, this.player});
 
@@ -42,24 +41,26 @@ class AnimalSoundCard extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('${sound.emoji}  ${sound.name}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Fonte: ${sound.source}'),
-            const SizedBox(height: 6),
-            Text('Autor: ${sound.author}'),
-            const SizedBox(height: 6),
-            Text('Licença: ${sound.license}'),
-            const SizedBox(height: 6),
-            SelectableText(sound.licenseUrl),
-            const SizedBox(height: 6),
-            SelectableText(sound.sourceUrl),
-            if (sound.modification.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Text('Arquivo local: ${sound.modification}'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Fonte: ${sound.source}'),
+              const SizedBox(height: AppSpacing.sm),
+              Text('Autor: ${sound.author}'),
+              const SizedBox(height: AppSpacing.sm),
+              Text('Licença: ${sound.license}'),
+              const SizedBox(height: AppSpacing.sm),
+              SelectableText(sound.licenseUrl),
+              const SizedBox(height: AppSpacing.sm),
+              SelectableText(sound.sourceUrl),
+              if (sound.modification.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                Text('Arquivo local: ${sound.modification}'),
+              ],
             ],
-          ],
+          ),
         ),
         actions: [
           TextButton(
@@ -73,45 +74,49 @@ class AnimalSoundCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Material(
       color: AppColors.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadii.cardRadius,
-        side: BorderSide(color: AppColors.hairline),
-      ),
+      borderRadius: AppRadii.cardRadius,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _onTap(context),
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Align(
                 alignment: Alignment.topRight,
-                child: InkResponse(
-                  onTap: () => _showLicense(context),
-                  radius: 18,
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 16,
+                child: Tooltip(
+                  message: 'Fonte e licença',
+                  child: IconButton(
+                    onPressed: () => _showLicense(context),
+                    icon: const Icon(Icons.info_outline_rounded, size: 19),
                     color: AppColors.inkMuted,
+                    constraints: const BoxConstraints(
+                      minWidth: 44,
+                      minHeight: 44,
+                    ),
                   ),
                 ),
               ),
-              Text(sound.emoji, style: const TextStyle(fontSize: 38)),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                sound.name,
-                style: const TextStyle(fontWeight: FontWeight.w800),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    sound.emoji,
+                    style: const TextStyle(fontSize: 54),
+                  ),
+                ),
               ),
+              Text(sound.name, style: theme.textTheme.titleMedium),
               const SizedBox(height: AppSpacing.sm),
               ValueListenableBuilder<String?>(
                 valueListenable: _player.playing,
                 builder: (context, playingPath, _) {
                   final isPlaying =
                       sound.hasAudio && playingPath == sound.assetPath;
-                  return _PlayChip(
+                  return _PlayState(
                     hasAudio: sound.hasAudio,
                     isPlaying: isPlaying,
                     animalName: sound.name,
@@ -126,8 +131,8 @@ class AnimalSoundCard extends StatelessWidget {
   }
 }
 
-class _PlayChip extends StatelessWidget {
-  const _PlayChip({
+class _PlayState extends StatelessWidget {
+  const _PlayState({
     required this.hasAudio,
     required this.isPlaying,
     required this.animalName,
@@ -169,30 +174,26 @@ class _PlayChip extends StatelessWidget {
           : hasAudio
           ? 'Tocar som de $animalName'
           : 'Som de $animalName em breve',
-      button: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: 5,
-        ),
+        constraints: const BoxConstraints(minHeight: 44),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(AppRadii.chip),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 15, color: fg),
-            const SizedBox(width: 4),
+            Icon(icon, size: 18, color: fg),
+            const SizedBox(width: AppSpacing.xs),
             Flexible(
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: fg,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

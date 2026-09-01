@@ -41,7 +41,7 @@ class EmptyState extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

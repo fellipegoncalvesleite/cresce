@@ -1,3 +1,4 @@
+import 'package:bebecare/screens/account_screen.dart';
 import 'package:bebecare/screens/vaccine_screen.dart';
 import 'package:bebecare/services/app_state.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(DatePickerDialog), findsNothing);
-    expect(state.selectedIndex, 4);
+    expect(find.byType(AccountScreen), findsOneWidget);
+    expect(state.selectedIndex, 0);
     expect(state.birthDate, originalBirthDate);
     expect(state.isDemoProfile, isTrue);
   });

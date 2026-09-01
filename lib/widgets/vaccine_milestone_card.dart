@@ -6,10 +6,9 @@ import '../models/vaccine.dart';
 import '../services/app_state.dart';
 import '../services/external_search.dart';
 import '../theme/app_tokens.dart';
-import 'app_card.dart';
 import 'status_pill.dart';
 
-/// One age milestone (e.g. "2 meses") rendered as a card listing its vaccines.
+/// One chronological vaccine milestone inside the grouped calendar surface.
 class VaccineMilestoneCard extends StatelessWidget {
   const VaccineMilestoneCard({super.key, required this.item});
 
@@ -18,47 +17,51 @@ class VaccineMilestoneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppCard(
-      child: Column(
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.healthyBg,
-                  borderRadius: BorderRadius.circular(AppRadii.chip),
-                ),
-                child: Text(
-                  item.ageLabel,
-                  style: TextStyle(
-                    color: AppColors.primaryDark,
-                    fontWeight: FontWeight.w800,
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.ageLabel, style: theme.textTheme.titleMedium),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  '${item.vaccines.length} '
+                  '${item.vaccines.length == 1 ? "vacina" : "vacinas"}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.inkMuted,
                   ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                '${item.vaccines.length} '
-                '${item.vaccines.length == 1 ? "vacina" : "vacinas"}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.inkMuted,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          for (var i = 0; i < item.vaccines.length; i++) ...[
-            if (i > 0) const Divider(height: AppSpacing.xl),
-            _VaccineTile(
-              vaccine: item.vaccines[i],
-              milestoneMonths: item.ageInMonths,
+                const SizedBox(height: AppSpacing.md),
+                for (var i = 0; i < item.vaccines.length; i++) ...[
+                  if (i > 0) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Divider(height: 1, color: AppColors.hairline),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                  _VaccineTile(
+                    vaccine: item.vaccines[i],
+                    milestoneMonths: item.ageInMonths,
+                  ),
+                ],
+              ],
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -113,60 +116,59 @@ class _VaccineTile extends StatelessWidget {
       babyAgeMonths: appState.babyAgeMonths,
       record: record,
     );
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+
+    final title = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(vaccine.name, style: theme.textTheme.titleSmall),
+        const SizedBox(height: 2),
+        Text(
+          vaccine.dose,
+          style: theme.textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
+        ),
+      ],
+    );
+    final statusPill = StatusPill(
+      label: status.label,
+      icon: status.icon,
+      foreground: status.foreground,
+      background: status.background,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    vaccine.name,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  Text(
-                    vaccine.dose,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.inkMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            StatusPill(
-              label: status.label,
-              icon: status.icon,
-              foreground: status.foreground,
-              background: status.background,
-            ),
-          ],
-        ),
+        if (scale > 1.35) ...[
+          title,
+          const SizedBox(height: AppSpacing.sm),
+          statusPill,
+        ] else
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: title),
+              const SizedBox(width: AppSpacing.sm),
+              statusPill,
+            ],
+          ),
         const SizedBox(height: AppSpacing.sm),
         _Detail(label: 'Protege contra', value: vaccine.protectsAgainst),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         _Detail(label: 'Observação', value: vaccine.notes),
         if (vaccine.requiresProfessionalConfirmation) ...[
           const SizedBox(height: AppSpacing.sm),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.flag_outlined,
-                size: 15,
-                color: AppColors.lateFg,
-              ),
-              const SizedBox(width: 6),
+              Icon(Icons.flag_outlined, size: 16, color: AppColors.lateFg),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
                   'Confirme detalhes (produto/esquema) na UBS.',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.lateFg,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -210,17 +212,17 @@ class _TakenRow extends StatelessWidget {
     final label = date != null
         ? 'Tomada em ${DateFormat('dd/MM/yyyy', 'pt_BR').format(date)}'
         : 'Tomada';
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
       children: [
         Icon(Icons.check_circle, size: 18, color: AppColors.takenFg),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: AppColors.takenFg,
-              fontWeight: FontWeight.w700,
-            ),
+        Text(
+          label,
+          style: TextStyle(
+            color: AppColors.takenFg,
+            fontWeight: FontWeight.w600,
           ),
         ),
         TextButton(
@@ -241,16 +243,16 @@ class _Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         style: Theme.of(
           context,
-        ).textTheme.bodySmall?.copyWith(color: AppColors.ink, height: 1.35),
+        ).textTheme.bodySmall?.copyWith(color: AppColors.ink),
         children: [
           TextSpan(
             text: '$label: ',
             style: TextStyle(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               color: AppColors.inkMuted,
             ),
           ),

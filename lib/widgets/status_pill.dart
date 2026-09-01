@@ -40,7 +40,7 @@ class StatusPill extends StatelessWidget {
               label,
               style: TextStyle(
                 color: foreground,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
             ),

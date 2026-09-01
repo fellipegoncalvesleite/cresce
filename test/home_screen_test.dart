@@ -84,11 +84,15 @@ void main() {
 
     state.selectTab(0);
     await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('home-vaccine-card')));
+    await tester.pump();
     await tester.tap(find.byKey(const Key('home-vaccine-card')));
     await tester.pump();
     expect(state.selectedIndex, 2);
 
     state.selectTab(0);
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('home-activity-card')));
     await tester.pump();
     await tester.tap(find.byKey(const Key('home-activity-card')));
     await tester.pump();
@@ -100,6 +104,11 @@ void main() {
       find.byKey(const Key('home-calm-card')),
       300,
     );
+    await Scrollable.ensureVisible(
+      tester.element(find.byKey(const Key('home-calm-card'))),
+      alignment: 0.5,
+    );
+    await tester.pump();
     await tester.tap(find.byKey(const Key('home-calm-card')));
     await tester.pump();
     expect(state.selectedIndex, 3);
@@ -141,6 +150,10 @@ void main() {
         'Adicione a data de nascimento para personalizar as sugestões.',
       ),
       findsOneWidget,
+    );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('home-growth-card')),
+      300,
     );
     expect(
       find.text('Registre peso e tamanho para acompanhar o histórico.'),

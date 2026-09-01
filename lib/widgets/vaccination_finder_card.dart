@@ -68,6 +68,7 @@ class _VaccinationFinderCardState extends State<VaccinationFinderCard> {
     final hasManualLocation = _manualController.text.trim().isNotEmpty;
 
     return AppCard(
+      color: AppColors.groupedSurface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -80,7 +81,7 @@ class _VaccinationFinderCardState extends State<VaccinationFinderCard> {
             'Postos e UBS próximas',
             style: Theme.of(
               context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -102,7 +103,7 @@ class _VaccinationFinderCardState extends State<VaccinationFinderCard> {
             'Cidade ou bairro',
             style: Theme.of(
               context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.sm),
           TextField(
@@ -129,7 +130,7 @@ class _VaccinationFinderCardState extends State<VaccinationFinderCard> {
             'Campanhas e mutirões',
             style: Theme.of(
               context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_tokens.dart';
-import '../widgets/app_card.dart';
 
 enum LegalDocumentType { terms, privacy }
 
@@ -21,37 +20,39 @@ class LegalDocumentScreen extends StatelessWidget {
       ),
       body: SafeArea(
         top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            for (var i = 0; i < sections.length; i++) ...[
-              AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Semantics(
-                      key: Key('legal-section-heading-$i'),
-                      header: true,
-                      child: Text(
-                        sections[i].title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      sections[i].body,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(height: 1.45),
-                    ),
-                  ],
-                ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.lg,
+                AppSpacing.xl,
+                AppSpacing.xxl,
               ),
-              if (i != sections.length - 1)
-                const SizedBox(height: AppSpacing.md),
-            ],
-          ],
+              children: [
+                for (var i = 0; i < sections.length; i++) ...[
+                  Semantics(
+                    key: Key('legal-section-heading-$i'),
+                    header: true,
+                    child: Text(
+                      sections[i].title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    sections[i].body,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(height: 1.55),
+                  ),
+                  if (i != sections.length - 1)
+                    const SizedBox(height: AppSpacing.xxl),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

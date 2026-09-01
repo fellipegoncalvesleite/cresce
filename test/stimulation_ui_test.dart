@@ -89,6 +89,51 @@ void main() {
     expect(find.text('Não foi possível tocar o som.'), findsOneWidget);
   });
 
+  testWidgets('sound source control has a 44x44 accessible target', (
+    tester,
+  ) async {
+    final player = FakeSoundPlayer();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 320,
+            child: AnimalSoundCard(sound: animalSounds.first, player: player),
+          ),
+        ),
+      ),
+    );
+
+    final info = find.byTooltip('Fonte e licença');
+    expect(info, findsOneWidget);
+    final size = tester.getSize(info);
+    expect(size.width, greaterThanOrEqualTo(44));
+    expect(size.height, greaterThanOrEqualTo(44));
+  });
+
+  testWidgets('shapes experience adapts at 320px and 2x text scale', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            size: const Size(320, 640),
+            textScaler: const TextScaler.linear(2),
+          ),
+          child: child!,
+        ),
+        home: const ShapesActivityScreen(),
+      ),
+    );
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const Key('shape-circle')), findsOneWidget);
+    expect(find.byKey(const Key('shape-square')), findsOneWidget);
+    expect(find.byKey(const Key('shape-triangle')), findsOneWidget);
+  });
+
   testWidgets('Cadê Achou can hide reveal and reset', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: PeekabooActivityScreen()));
 

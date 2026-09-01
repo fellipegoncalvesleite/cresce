@@ -18,12 +18,7 @@ class StoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            story.title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+          Text(story.title, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.sm,
@@ -41,7 +36,7 @@ class StoryCard extends StatelessWidget {
             story.origin,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.inkMuted,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -73,9 +68,8 @@ class _MetaChip extends StatelessWidget {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: AppColors.groupedSurface,
         borderRadius: BorderRadius.circular(AppRadii.chip),
-        border: Border.all(color: AppColors.hairline),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -86,7 +80,7 @@ class _MetaChip extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               color: AppColors.inkMuted,
             ),
           ),

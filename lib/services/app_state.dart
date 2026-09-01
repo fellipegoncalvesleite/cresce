@@ -29,6 +29,11 @@ class AppState extends ChangeNotifier {
   static const _kEmailNews = 'pref_email_news';
   static const _currentDataVersion = 1;
 
+  static const int tabCount = 4;
+
+  static int normalizeTabIndex(int index) =>
+      index >= 0 && index < tabCount ? index : 0;
+
   SharedPreferences? _prefs;
   final DateTime Function() _now;
 
@@ -47,7 +52,7 @@ class AppState extends ChangeNotifier {
   final Map<String, VaccineRecord> _vaccineRecords = {};
 
   // --- getters ---
-  int get selectedIndex => _selectedIndex;
+  int get selectedIndex => normalizeTabIndex(_selectedIndex);
   ThemeMode get themeMode => _themeMode;
   String get parent1Name => _parent1Name;
   String get parent2Name => _parent2Name;
@@ -207,8 +212,9 @@ class AppState extends ChangeNotifier {
 
   // --- mutations ---
   void selectTab(int index) {
-    if (_selectedIndex == index) return;
-    _selectedIndex = index;
+    final normalized = normalizeTabIndex(index);
+    if (_selectedIndex == normalized) return;
+    _selectedIndex = normalized;
     notifyListeners();
   }
 

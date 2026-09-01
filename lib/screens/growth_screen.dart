@@ -11,6 +11,7 @@ import '../widgets/disclaimer_note.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/growth_status_card.dart';
 import '../widgets/section_header.dart';
+import '../widgets/top_level_page_header.dart';
 
 class GrowthScreen extends StatefulWidget {
   const GrowthScreen({super.key});
@@ -99,146 +100,255 @@ class _GrowthScreenState extends State<GrowthScreen> {
     final recentHistory = appState.growthHistory.reversed.take(4).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Crescimento')),
       body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            const SectionHeader(
-              title: 'Peso e tamanho',
-              subtitle: 'Uma leitura simples do peso em relação ao tamanho.',
-            ),
-            if (status != null && measurement != null)
-              GrowthStatusCard(status: status, caption: _caption(measurement))
-            else
-              AppCard(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.xl,
-                  horizontal: AppSpacing.lg,
-                ),
-                child: EmptyState(
-                  icon: Icons.straighten_rounded,
-                  title: 'Sem medidas ainda',
-                  message:
-                      'Informe o peso e o comprimento atuais para ver a orientação.',
-                ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 680),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.xxl,
               ),
-            const SizedBox(height: AppSpacing.xl),
-            Semantics(
-              key: const Key('growth-history-heading'),
-              header: true,
-              child: Text(
-                'Histórico recente',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            if (recentHistory.isEmpty)
-              const AppCard(
-                child: Text('As medidas registradas vão aparecer aqui.'),
-              )
-            else
-              AppCard(
-                child: Column(
-                  children: [
-                    for (var i = 0; i < recentHistory.length; i++) ...[
-                      _HistoryRow(
-                        key: Key('growth-history-$i'),
-                        record: recentHistory[i],
-                        weight: _fmtWeight(
-                          recentHistory[i].measurement.weightKg,
-                        ),
-                        length: _fmtLength(
-                          recentHistory[i].measurement.lengthCm,
-                        ),
-                      ),
-                      if (i != recentHistory.length - 1)
-                        const Divider(height: AppSpacing.xl),
-                    ],
-                  ],
+              children: [
+                const TopLevelPageHeader(
+                  title: 'Crescimento',
+                  subtitle: 'Peso e tamanho em uma leitura simples.',
                 ),
-              ),
-            const SizedBox(height: AppSpacing.xl),
-            AppCard(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Medidas atuais',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                const SizedBox(height: AppSpacing.xl),
+                if (status != null && measurement != null) ...[
+                  GrowthStatusCard(status: status),
+                  const SizedBox(height: AppSpacing.md),
+                  _MeasurementSummary(
+                    measurement: measurement,
+                    weight: _fmtWeight(measurement.weightKg),
+                    length: _fmtLength(measurement.lengthCm),
+                  ),
+                ] else
+                  AppCard(
+                    color: AppColors.groupedSurface,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xl,
+                      horizontal: AppSpacing.lg,
                     ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Row(
+                    child: const EmptyState(
+                      icon: Icons.straighten_rounded,
+                      title: 'Sem medidas ainda',
+                      message:
+                          'Informe o peso e o comprimento atuais para ver a orientação.',
+                    ),
+                  ),
+                const SizedBox(height: AppSpacing.xxl),
+                Semantics(
+                  key: const Key('growth-history-heading'),
+                  header: true,
+                  child: Text(
+                    'Histórico recente',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                if (recentHistory.isEmpty)
+                  AppCard(
+                    color: AppColors.groupedSurface,
+                    child: const Text(
+                      'As medidas registradas vão aparecer aqui.',
+                    ),
+                  )
+                else
+                  AppCard(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl,
+                      vertical: AppSpacing.xs,
+                    ),
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: _NumberField(
-                            fieldKey: const Key('growth-weight-field'),
-                            controller: _weight,
-                            label: 'Peso (kg)',
-                            hint: 'ex.: 5,8',
-                            validator: (v) => _parse(v ?? '') == null
-                                ? 'Informe o peso'
-                                : null,
+                        for (var i = 0; i < recentHistory.length; i++) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.md,
+                            ),
+                            child: _HistoryRow(
+                              key: Key('growth-history-$i'),
+                              record: recentHistory[i],
+                              weight: _fmtWeight(
+                                recentHistory[i].measurement.weightKg,
+                              ),
+                              length: _fmtLength(
+                                recentHistory[i].measurement.lengthCm,
+                              ),
+                            ),
                           ),
+                          if (i != recentHistory.length - 1)
+                            Divider(height: 1, color: AppColors.hairline),
+                        ],
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: AppSpacing.xxl),
+                const SectionHeader(
+                  title: 'Adicionar medida',
+                  subtitle: 'O formulário fica separado da orientação atual.',
+                ),
+                AppCard(
+                  color: AppColors.groupedSurface,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Medidas atuais',
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: _NumberField(
-                            fieldKey: const Key('growth-length-field'),
-                            controller: _length,
-                            label: 'Comprimento (cm)',
-                            hint: 'ex.: 60',
-                            validator: (v) => _parse(v ?? '') == null
-                                ? 'Informe o tamanho'
-                                : null,
-                          ),
+                        const SizedBox(height: AppSpacing.lg),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final scale = MediaQuery.textScalerOf(
+                              context,
+                            ).scale(1);
+                            final stackFields =
+                                constraints.maxWidth < 400 || scale > 1.3;
+                            final weight = _NumberField(
+                              fieldKey: const Key('growth-weight-field'),
+                              controller: _weight,
+                              label: 'Peso (kg)',
+                              hint: 'ex.: 5,8',
+                              validator: (v) => _parse(v ?? '') == null
+                                  ? 'Informe o peso'
+                                  : null,
+                            );
+                            final length = _NumberField(
+                              fieldKey: const Key('growth-length-field'),
+                              controller: _length,
+                              label: 'Comprimento (cm)',
+                              hint: 'ex.: 60',
+                              validator: (v) => _parse(v ?? '') == null
+                                  ? 'Informe o tamanho'
+                                  : null,
+                            );
+                            if (stackFields) {
+                              return Column(
+                                children: [
+                                  weight,
+                                  const SizedBox(height: AppSpacing.md),
+                                  length,
+                                ],
+                              );
+                            }
+                            return Row(
+                              children: [
+                                Expanded(child: weight),
+                                const SizedBox(width: AppSpacing.md),
+                                Expanded(child: length),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        _NumberField(
+                          fieldKey: const Key('growth-age-field'),
+                          controller: _age,
+                          label: 'Idade em meses (opcional)',
+                          hint: 'ex.: 4',
+                          validator: (_) => null,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        FilledButton.icon(
+                          onPressed: _submit,
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Registrar medida'),
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    _NumberField(
-                      fieldKey: const Key('growth-age-field'),
-                      controller: _age,
-                      label: 'Idade em meses (opcional)',
-                      hint: 'ex.: 4',
-                      validator: (_) => null,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FilledButton.icon(
-                      onPressed: _submit,
-                      icon: const Icon(Icons.insights_outlined),
-                      label: const Text('Ver orientação'),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.lg),
+                const DisclaimerNote(
+                  text:
+                      'Essa informação é apenas uma orientação e não '
+                      'substitui avaliação médica.',
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.lg),
-            const DisclaimerNote(
-              text:
-                  'Essa informação é apenas uma orientação e não '
-                  'substitui avaliação médica.',
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  String _caption(GrowthMeasurement m) {
-    final parts = <String>[
-      '${_fmt(m.weightKg)} kg',
-      '${_fmt(m.lengthCm)} cm',
-      'IMC ~${m.bmi.toStringAsFixed(1).replaceAll('.', ',')}',
-    ];
-    return parts.join(' · ');
+class _MeasurementSummary extends StatelessWidget {
+  const _MeasurementSummary({
+    required this.measurement,
+    required this.weight,
+    required this.length,
+  });
+
+  final GrowthMeasurement measurement;
+  final String weight;
+  final String length;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AppCard(
+      color: AppColors.groupedSurface,
+      child: Wrap(
+        spacing: AppSpacing.xl,
+        runSpacing: AppSpacing.md,
+        children: [
+          _Metric(label: 'Peso', value: '$weight kg'),
+          _Metric(label: 'Comprimento', value: '$length cm'),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Estimativa simples',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: AppColors.inkMuted,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'IMC ~${measurement.bmi.toStringAsFixed(1).replaceAll('.', ',')}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.inkMuted,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Metric extends StatelessWidget {
+  const _Metric({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: AppColors.inkMuted,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(value, style: theme.textTheme.titleMedium),
+      ],
+    );
   }
 }
 
@@ -265,7 +375,17 @@ class _HistoryRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(Icons.timeline_outlined, color: AppColors.primaryDark, size: 20),
+        Padding(
+          padding: const EdgeInsets.only(top: 3),
+          child: Container(
+            width: 9,
+            height: 9,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
@@ -273,11 +393,9 @@ class _HistoryRow extends StatelessWidget {
             children: [
               Text(
                 '$weight kg · $length cm',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                style: Theme.of(context).textTheme.titleSmall,
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 details,
                 style: Theme.of(

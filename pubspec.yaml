@@ -35,7 +35,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.2.2
   intl: ^0.20.2
-  google_fonts: ^6.1.0
   provider: ^6.1.1
   url_launcher: ^6.3.0
   # Playback of the licensed animal sounds (Parte 4).

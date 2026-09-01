@@ -48,7 +48,7 @@ class _ShapesActivityScreenState extends State<ShapesActivityScreen> {
                 'Toque no $_targetLabel',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -61,46 +61,52 @@ class _ShapesActivityScreenState extends State<ShapesActivityScreen> {
               ),
               const SizedBox(height: AppSpacing.xxl),
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _ShapeChoice(
-                      key: const Key('shape-circle'),
-                      semanticLabel: 'Círculo',
-                      onTap: () => _choose('circle'),
-                      child: Container(
-                        width: 84,
-                        height: 84,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: [
+                        _ShapeChoice(
+                          key: const Key('shape-circle'),
+                          semanticLabel: 'Círculo',
+                          onTap: () => _choose('circle'),
+                          child: Container(
+                            width: 84,
+                            height: 84,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    _ShapeChoice(
-                      key: const Key('shape-square'),
-                      semanticLabel: 'Quadrado',
-                      onTap: () => _choose('square'),
-                      child: Container(
-                        width: 84,
-                        height: 84,
-                        decoration: BoxDecoration(
-                          color: AppColors.accent,
-                          borderRadius: BorderRadius.circular(12),
+                        _ShapeChoice(
+                          key: const Key('shape-square'),
+                          semanticLabel: 'Quadrado',
+                          onTap: () => _choose('square'),
+                          child: Container(
+                            width: 84,
+                            height: 84,
+                            decoration: BoxDecoration(
+                              color: AppColors.accent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
-                      ),
+                        _ShapeChoice(
+                          key: const Key('shape-triangle'),
+                          semanticLabel: 'Triângulo',
+                          onTap: () => _choose('triangle'),
+                          child: Icon(
+                            Icons.change_history_rounded,
+                            size: 108,
+                            color: AppColors.aboveFg,
+                          ),
+                        ),
+                      ],
                     ),
-                    _ShapeChoice(
-                      key: const Key('shape-triangle'),
-                      semanticLabel: 'Triângulo',
-                      onTap: () => _choose('triangle'),
-                      child: Icon(
-                        Icons.change_history_rounded,
-                        size: 108,
-                        color: AppColors.aboveFg,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
               SizedBox(
@@ -112,7 +118,7 @@ class _ShapesActivityScreenState extends State<ShapesActivityScreen> {
                         _feedback!,
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     if (_feedback == 'Encontrou!') ...[

@@ -19,7 +19,7 @@ class _PeekabooActivityScreenState extends State<PeekabooActivityScreen> {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final duration = reduceMotion
         ? Duration.zero
-        : const Duration(milliseconds: 280);
+        : const Duration(milliseconds: 200);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cadê? Achou!')),
@@ -55,6 +55,20 @@ class _PeekabooActivityScreenState extends State<PeekabooActivityScreen> {
                         ),
                         child: AnimatedSwitcher(
                           duration: duration,
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                                opacity: animation,
+                                child: ScaleTransition(
+                                  scale: Tween<double>(begin: 0.98, end: 1)
+                                      .animate(
+                                        CurvedAnimation(
+                                          parent: animation,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                      ),
+                                  child: child,
+                                ),
+                              ),
                           child: _revealed
                               ? Column(
                                   key: const Key('peekaboo-revealed'),
@@ -82,7 +96,7 @@ class _PeekabooActivityScreenState extends State<PeekabooActivityScreen> {
                                       'Achou!',
                                       style: TextStyle(
                                         fontSize: 24,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ],
@@ -113,7 +127,7 @@ class _PeekabooActivityScreenState extends State<PeekabooActivityScreen> {
                                       'Cadê?',
                                       style: TextStyle(
                                         fontSize: 24,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ],

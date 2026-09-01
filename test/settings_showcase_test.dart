@@ -44,6 +44,22 @@ void main() {
     expect(find.text('Notificações'), findsNothing);
   });
 
+  testWidgets('Settings theme choices keep at least a 44x44 touch target', (
+    tester,
+  ) async {
+    final state = await demoState();
+    await pumpSettings(tester, state);
+
+    for (final label in ['Padrão do sistema', 'Claro', 'Escuro']) {
+      final target = find
+          .ancestor(of: find.text(label), matching: find.byType(InkWell))
+          .first;
+      final size = tester.getSize(target);
+      expect(size.width, greaterThanOrEqualTo(44), reason: label);
+      expect(size.height, greaterThanOrEqualTo(44), reason: label);
+    }
+  });
+
   testWidgets('Settings Home switches directly change Home content', (
     tester,
   ) async {

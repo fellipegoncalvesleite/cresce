@@ -9,6 +9,7 @@ import '../theme/app_tokens.dart';
 import '../widgets/app_card.dart';
 import '../widgets/disclaimer_note.dart';
 import '../widgets/section_header.dart';
+import '../widgets/top_level_page_header.dart';
 import '../widgets/vaccination_finder_card.dart';
 import '../widgets/vaccine_milestone_card.dart';
 
@@ -30,47 +31,67 @@ class VaccineScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Vacinas')),
       body: SafeArea(
-        top: false,
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          children: [
-            const SectionHeader(
-              title: 'Vacinas',
-              subtitle: 'Calendário Nacional de Vacinação da Criança (PNI).',
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 720),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.xl,
+                AppSpacing.md,
+                AppSpacing.xl,
+                AppSpacing.xxl,
+              ),
+              children: [
+                const TopLevelPageHeader(
+                  title: 'Vacinas',
+                  subtitle:
+                      'Calendário Nacional de Vacinação da Criança (PNI).',
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                _ProgressCard(summary: summary),
+                const SizedBox(height: AppSpacing.md),
+                _NextVaccineCard(
+                  ageKnown: appState.babyAgeMonths != null,
+                  milestone: nextMilestone,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                _BirthDateCard(appState: appState),
+                const SizedBox(height: AppSpacing.xxl),
+                const SectionHeader(
+                  title: 'Calendário por idade',
+                  subtitle: 'Registros organizados em ordem cronológica.',
+                ),
+                AppCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < vaccineSchedule.length; i++) ...[
+                        VaccineMilestoneCard(item: vaccineSchedule[i]),
+                        if (i != vaccineSchedule.length - 1)
+                          Divider(
+                            height: 1,
+                            indent: AppSpacing.xl,
+                            endIndent: AppSpacing.xl,
+                            color: AppColors.hairline,
+                          ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+                const VaccinationFinderCard(),
+                const SizedBox(height: AppSpacing.lg),
+                const DisclaimerNote(
+                  icon: Icons.health_and_safety_outlined,
+                  text:
+                      'O calendário pode variar conforme histórico vacinal, '
+                      'campanhas, município, disponibilidade e orientação '
+                      'profissional. Consulte a UBS ou profissional de saúde.',
+                ),
+              ],
             ),
-            _ProgressCard(summary: summary),
-            const SizedBox(height: AppSpacing.lg),
-            _NextVaccineCard(
-              ageKnown: appState.babyAgeMonths != null,
-              milestone: nextMilestone,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            _BirthDateCard(appState: appState),
-            const SizedBox(height: AppSpacing.lg),
-            const VaccinationFinderCard(),
-            const SizedBox(height: AppSpacing.xl),
-            Text(
-              'Calendário por idade',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            for (final item in vaccineSchedule) ...[
-              VaccineMilestoneCard(item: item),
-              const SizedBox(height: AppSpacing.md),
-            ],
-            const SizedBox(height: AppSpacing.sm),
-            const DisclaimerNote(
-              icon: Icons.health_and_safety_outlined,
-              text:
-                  'O calendário pode variar conforme histórico vacinal, '
-                  'campanhas, município, disponibilidade e orientação '
-                  'profissional. Consulte a UBS ou profissional de saúde.',
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -86,67 +107,63 @@ class _ProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final pct = summary.completion;
     if (pct == null) {
-      return const AppCard(
-        child: Text(
+      return AppCard(
+        color: AppColors.groupedSurface,
+        child: const Text(
           'Adicione a data de nascimento para acompanhar o calendário por idade.',
         ),
       );
     }
 
+    final theme = Theme.of(context);
+    final percent = '${(pct * 100).round()}%';
     return AppCard(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 52,
-            height: 52,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularProgressIndicator(
-                  value: pct,
-                  strokeWidth: 5,
-                  backgroundColor: AppColors.hairline,
-                  valueColor: AlwaysStoppedAnimation(AppColors.primary),
-                ),
-                Text(
-                  '${(pct * 100).round()}%',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+          Text(
+            'Vacinas esperadas até agora',
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: AppColors.inkMuted,
             ),
           ),
-          const SizedBox(width: AppSpacing.lg),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Vacinas esperadas até agora',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${summary.takenDue} de ${summary.dueTotal} registradas',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
-                ),
-                if (summary.overdue > 0) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    '${summary.overdue} ${summary.overdue == 1 ? "ainda não registrada" : "ainda não registradas"}',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
-                  ),
-                ],
-              ],
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '${summary.takenDue} de ${summary.dueTotal} registradas',
+            style: theme.textTheme.titleLarge,
+          ),
+          if (summary.overdue > 0) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              '${summary.overdue} ${summary.overdue == 1 ? "ainda não registrada" : "ainda não registradas"}',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.inkMuted,
+              ),
             ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadii.chip),
+                  child: LinearProgressIndicator(
+                    value: pct,
+                    minHeight: 7,
+                    backgroundColor: AppColors.groupedSurface,
+                    valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Text(
+                percent,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: AppColors.primaryDark,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -163,8 +180,9 @@ class _NextVaccineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!ageKnown) {
-      return const AppCard(
-        child: Text(
+      return AppCard(
+        color: AppColors.groupedSurface,
+        child: const Text(
           'Adicione a data de nascimento para ver o que vem a seguir.',
         ),
       );
@@ -172,15 +190,16 @@ class _NextVaccineCard extends StatelessWidget {
 
     final item = milestone;
     if (item == null) {
-      return const AppCard(
-        child: Column(
+      return AppCard(
+        color: AppColors.healthyBg,
+        child: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Calendário registrado',
-              style: TextStyle(fontWeight: FontWeight.w800),
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: AppSpacing.xs),
             Text('Não há outra vacina pendente no calendário representado.'),
           ],
         ),
@@ -192,28 +211,52 @@ class _NextVaccineCard extends StatelessWidget {
     final primary = vaccines.length == 1
         ? '${vaccines.first.name} · ${vaccines.first.dose}'
         : '${vaccines.length} vacinas ainda não registradas aos ${item.ageLabel}';
-    final secondary = item.isOverdue
-        ? 'Previstas para ${item.ageLabel}'
-        : 'Previstas para ${item.ageLabel}';
+    final secondary = 'Previstas para ${item.ageLabel}';
+    final tint = item.isOverdue ? AppColors.lateBg : AppColors.groupedSurface;
+    final accent = item.isOverdue ? AppColors.lateFg : AppColors.primaryDark;
 
     return AppCard(
-      child: Column(
+      color: tint,
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.72),
+              borderRadius: AppRadii.fieldRadius,
+            ),
+            child: Icon(
+              item.isOverdue
+                  ? Icons.schedule_rounded
+                  : Icons.event_available_outlined,
+              color: accent,
+            ),
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(primary),
-          const SizedBox(height: 2),
-          Text(
-            secondary,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(primary, style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  secondary,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -249,7 +292,8 @@ class _BirthDateCard extends StatelessWidget {
 
     return AppCard(
       key: const Key('vaccine-birth-date-card'),
-      onTap: isDemoProfile ? () => appState.selectTab(4) : () => _pick(context),
+      color: AppColors.groupedSurface,
+      onTap: isDemoProfile ? () => openAccount(context) : () => _pick(context),
       semanticLabel: isDemoProfile
           ? 'Data de nascimento da demonstração. Vá para Conta para começar com seu bebê.'
           : 'Definir data de nascimento do bebê',
@@ -267,11 +311,9 @@ class _BirthDateCard extends StatelessWidget {
                       : birth == null
                       ? 'Definir data de nascimento'
                       : 'Nascimento: ${DateFormat('dd/MM/yyyy', 'pt_BR').format(birth)}',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: theme.textTheme.titleSmall,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   isDemoProfile
                       ? 'Para alterar a idade, escolha “Começar com meu bebê” na Conta.'
@@ -285,7 +327,7 @@ class _BirthDateCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.chevron_right, color: AppColors.inkMuted),
+          Icon(Icons.chevron_right_rounded, color: AppColors.inkMuted),
         ],
       ),
     );

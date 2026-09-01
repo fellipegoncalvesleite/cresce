@@ -42,8 +42,14 @@ void main() {
     expect(find.text('Lia · 8 meses'), findsOneWidget);
     expect(find.textContaining('Nascimento:'), findsOneWidget);
     expect(find.text('8,0 kg · 70 cm'), findsOneWidget);
-    expect(find.text('Conta local de demonstração'), findsOneWidget);
     expect(find.text('Começar com meu bebê'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Conta local de demonstração'),
+      300,
+      scrollable: mainScrollable(),
+    );
+    expect(find.text('Conta local de demonstração'), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.byKey(const Key('account-baby-name-field')),
