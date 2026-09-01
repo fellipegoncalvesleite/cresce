@@ -37,8 +37,6 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^6.1.0
   provider: ^6.1.1
-  # Location + external search for the "vacinação perto de você" feature (Parte 3).
-  geolocator: ^13.0.1
   url_launcher: ^6.3.0
   # Playback of the licensed animal sounds (Parte 4).
   audioplayers: ^6.1.0

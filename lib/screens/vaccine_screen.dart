@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/vaccine_schedule.dart';
 import '../services/app_state.dart';
+import '../services/vaccine_summary.dart';
 import '../theme/app_tokens.dart';
 import '../widgets/app_card.dart';
 import '../widgets/disclaimer_note.dart';
@@ -14,23 +15,19 @@ import '../widgets/vaccine_milestone_card.dart';
 class VaccineScreen extends StatelessWidget {
   const VaccineScreen({super.key});
 
-  int get _total =>
-      vaccineSchedule.fold(0, (sum, item) => sum + item.vaccines.length);
-
-  int _takenCount(AppState state) {
-    var taken = 0;
-    for (final item in vaccineSchedule) {
-      for (final v in item.vaccines) {
-        if (state.recordFor(v.id)?.taken ?? false) taken++;
-      }
-    }
-    return taken;
-  }
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final taken = _takenCount(appState);
+    final summary = calculateVaccineProgressSummary(
+      schedule: vaccineSchedule,
+      babyAgeMonths: appState.babyAgeMonths,
+      recordFor: appState.recordFor,
+    );
+    final nextMilestone = nextRelevantVaccineMilestone(
+      schedule: vaccineSchedule,
+      babyAgeMonths: appState.babyAgeMonths,
+      recordFor: appState.recordFor,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Vacinas')),
@@ -43,7 +40,12 @@ class VaccineScreen extends StatelessWidget {
               title: 'Vacinas',
               subtitle: 'Calendário Nacional de Vacinação da Criança (PNI).',
             ),
-            _ProgressCard(taken: taken, total: _total),
+            _ProgressCard(summary: summary),
+            const SizedBox(height: AppSpacing.lg),
+            _NextVaccineCard(
+              ageKnown: appState.babyAgeMonths != null,
+              milestone: nextMilestone,
+            ),
             const SizedBox(height: AppSpacing.lg),
             _BirthDateCard(appState: appState),
             const SizedBox(height: AppSpacing.lg),
@@ -76,14 +78,21 @@ class VaccineScreen extends StatelessWidget {
 }
 
 class _ProgressCard extends StatelessWidget {
-  const _ProgressCard({required this.taken, required this.total});
+  const _ProgressCard({required this.summary});
 
-  final int taken;
-  final int total;
+  final VaccineProgressSummary summary;
 
   @override
   Widget build(BuildContext context) {
-    final pct = total == 0 ? 0.0 : taken / total;
+    final pct = summary.completion;
+    if (pct == null) {
+      return const AppCard(
+        child: Text(
+          'Adicione a data de nascimento para acompanhar o calendário por idade.',
+        ),
+      );
+    }
+
     return AppCard(
       child: Row(
         children: [
@@ -115,20 +124,96 @@ class _ProgressCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Registradas como tomadas',
+                  'Vacinas esperadas até agora',
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '$taken de $total vacinas do calendário',
+                  '${summary.takenDue} de ${summary.dueTotal} registradas',
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
                 ),
+                if (summary.overdue > 0) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${summary.overdue} ${summary.overdue == 1 ? "ainda não registrada" : "ainda não registradas"}',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
+                  ),
+                ],
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NextVaccineCard extends StatelessWidget {
+  const _NextVaccineCard({required this.ageKnown, required this.milestone});
+
+  final bool ageKnown;
+  final VaccineNextMilestone? milestone;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ageKnown) {
+      return const AppCard(
+        child: Text(
+          'Adicione a data de nascimento para ver o que vem a seguir.',
+        ),
+      );
+    }
+
+    final item = milestone;
+    if (item == null) {
+      return const AppCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Calendário registrado',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            SizedBox(height: 4),
+            Text('Não há outra vacina pendente no calendário representado.'),
+          ],
+        ),
+      );
+    }
+
+    final vaccines = item.vaccines;
+    final title = item.isOverdue ? 'Atenção ao calendário' : 'Próximas';
+    final primary = vaccines.length == 1
+        ? '${vaccines.first.name} · ${vaccines.first.dose}'
+        : '${vaccines.length} vacinas ainda não registradas aos ${item.ageLabel}';
+    final secondary = item.isOverdue
+        ? 'Previstas para ${item.ageLabel}'
+        : 'Previstas para ${item.ageLabel}';
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(primary),
+          const SizedBox(height: 2),
+          Text(
+            secondary,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: AppColors.inkMuted),
           ),
         ],
       ),
